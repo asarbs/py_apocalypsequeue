@@ -38,3 +38,7 @@ class Vector(object):
     def getUnitVecotr(self):
         length = self.getLength()
         return Vector(x=(self.__x/length), y=(self.__y/length))
+
+    def round(self):
+        self.__x = round(self.__x)
+        self.__y = round(self.__y)

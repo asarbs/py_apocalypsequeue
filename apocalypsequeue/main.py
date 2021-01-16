@@ -7,7 +7,7 @@ from Vector import Vector
 
 pygame.init()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 # parameters:
@@ -46,11 +46,6 @@ def main_event_loop(client_list):
             client.move_and_bounce()
 
 
-def draw_clients(screen, client_list):
-    for client in client_list:
-        client.draw(screen)
-
-
 def draw_cash_register(screen, cash_register_list):
     for cash_register in cash_register_list:
         cash_register.draw(screen)
@@ -63,37 +58,43 @@ def print_stats(client_list):
             infected += 1
     logging.info('infected {} of {} clients'.format(infected, len(client_list)))
 
-def main():
-    cash_register_list = [
-        CashRegister(position=Vector((width / 2), (height - 15))),
-        CashRegister(position=Vector((width / 3), (height - 15))),
-        CashRegister(position=Vector(2 * (width / 3), (height - 15)))
-                          ]
-    client_list = []
 
-    for x in range(1,20):
-        x = random.randrange(0, (width / 2), 1)
+def main():
+    cash_register_list = build_cash_registers()
+
+    clients_lists = pygame.sprite.Group()
+
+    for x in range(0,20):
+        x = random.randrange(0, width , 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2
-        client_list.append(
-            Client(position=Vector(x, y), infected=infected, target_cash_register=random.choice(cash_register_list)),
-        )
+        client = Client(position=Vector(x, y), infected=infected, target_cash_register=random.choice(cash_register_list)),
+        clients_lists.add(client)
 
     while running:
 
-        main_event_loop(client_list)
+        main_event_loop(clients_lists)
         # Fill the background with white
         screen.fill(BACKGROUND_COLOR)
-        # Draw a solid blue circle in the center
-        draw_clients(screen, client_list)
+
+        clients_lists.draw(screen)
+
         draw_cash_register(screen, cash_register_list)
-        print_stats(client_list)
+        print_stats(clients_lists)
         # Flip the display
         logging.debug('fps:{}'.format(clock.get_fps()))
         clock.tick(FPS)
         pygame.display.update()
 
     pygame.quit()
+
+
+def build_cash_registers():
+    return [
+        CashRegister(position=Vector((width / 2), (height - 15))),
+        CashRegister(position=Vector((width / 3), (height - 15))),
+        CashRegister(position=Vector(2 * (width / 3), (height - 15)))
+    ]
 
 
 if __name__ == "__main__":
