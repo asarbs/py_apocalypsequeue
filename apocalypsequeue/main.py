@@ -17,7 +17,7 @@ play = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
-BLACK = (0, 0, 0)
+BACKGROUND_COLOR = (128, 128, 128)
 
 FPS = 60
 
@@ -29,6 +29,7 @@ def get_infection(client_list):
                 distance = c1.getClientDistance(c2)
                 if c2.isInfected() and distance < 10 and random.random() < 0.1:
                     c1.infect()
+
 
 def main_event_loop(client_list):
     global running
@@ -82,7 +83,7 @@ def main():
 
         main_event_loop(client_list)
         # Fill the background with white
-        screen.fill(BLACK)
+        screen.fill(BACKGROUND_COLOR)
         # Draw a solid blue circle in the center
         draw_clients(screen, client_list)
         draw_cash_register(screen, cash_register_list)

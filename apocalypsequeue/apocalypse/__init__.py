@@ -4,6 +4,7 @@ from Vector import Vector
 import pygame
 import random
 import logging
+import os
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -12,6 +13,8 @@ YELLOW = (255, 255, 0)
 
 class Client:
     count = 1
+    people_img = pygame.image.load("icons/person.png")
+    zombie_img = pygame.image.load("icons/zombie.png")
 
     def __init__(self, target_cash_register, infected=False, position=Vector(0, 0), idName="0"):
         self.__id = Client.count
@@ -40,8 +43,8 @@ class Client:
 
     def draw(self, screen):
         logging.debug('Client.draw:{}, pos={}, infected={}'.format(self.__id, self.getPos(), self.__infected))
-        color = RED if self.__infected else YELLOW
-        pygame.draw.circle(screen, color , self.getPos(), 5)
+        img = Client.zombie_img if self.__infected else Client.people_img
+        screen.blit(img, self.getPos())
 
     def isInfected(self):
         return self.__infected
@@ -53,6 +56,7 @@ class Client:
 
 class CashRegister:
     count = 1
+    cs_img = pygame.image.load("icons/cr.png")
 
     def __init__(self, position=Vector(0, 0)):
         self.__id = CashRegister.count
@@ -67,5 +71,4 @@ class CashRegister:
 
     def draw(self, screen):
         logging.debug('CashRegister.draw:{}'.format(self.__id))
-        rect = pygame.Rect(self.getPos(), (10,10))
-        pygame.draw.rect(screen, GREEN, rect)
+        screen.blit(CashRegister.cs_img, self.getPos())
