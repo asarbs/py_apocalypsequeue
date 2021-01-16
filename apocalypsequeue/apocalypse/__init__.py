@@ -16,10 +16,10 @@ class Client(pygame.sprite.Sprite):
     people_img = pygame.image.load("icons/person.png")
     zombie_img = pygame.image.load("icons/zombie.png")
     step_size = 5.0
+    random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
     def __init__(self, target_cash_register, infected=False, position=Vector(0, 0), idName="0"):
         pygame.sprite.Sprite.__init__(self)
-
         self.__id = Client.count
         self.__position = position
         self.__target_cash_register = target_cash_register
@@ -40,15 +40,25 @@ class Client(pygame.sprite.Sprite):
     def __hash__(self):
         return hash(str(__class__) * self.__id)
 
-    def move_and_bounce(self):
+    def move_and_bounce(self, client_list):
         destination = self.__target_cash_register.getPosVector() - self.__position
         if destination.getLength() > 5:
             vec_to = destination.getUnitVecotr() * Client.step_size
-            vec_to.round()
-            logging.debug("vec_to = {}".format(str(vec_to)))
-            self.__position += vec_to
-            self.rect.move_ip(vec_to.getX(), vec_to.getY())
+            self.__move(vec_to)
+
         logging.debug("position = {}; rect=[{},{}]".format(str(self.__position), self.rect.x, self.rect.y))
+
+    def __move(self, vec_to):
+        vec_to.round()
+        logging.debug("vec_to = {}".format(str(vec_to)))
+        self.__position += vec_to
+        self.rect.move_ip(vec_to.getX(), vec_to.getY())
+
+    def move_randomly(self):
+        vector = Vector(random.choice(Client.random_direction), random.choice(Client.random_direction))
+
+        vec_to = vector.getUnitVecotr() * Client.step_size
+        self.__move(vec_to)
 
     def getPos(self):
         return int(self.__position.getX()), int(self.__position.getY())

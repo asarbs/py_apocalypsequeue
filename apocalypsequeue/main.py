@@ -7,7 +7,7 @@ from Vector import Vector
 
 pygame.init()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 # parameters:
@@ -43,7 +43,11 @@ def main_event_loop(client_list):
     if play:
         get_infection(client_list)
         for client in client_list:
-            client.move_and_bounce()
+            client.move_and_bounce(client_list)
+            list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
+            logging.debug("client {} collided with {} clients".format(client,len(list_of_collided_clients)))
+            if len(list_of_collided_clients) > 0:
+                client.move_randomly()
 
 
 def draw_cash_register(screen, cash_register_list):
@@ -62,14 +66,7 @@ def print_stats(client_list):
 def main():
     cash_register_list = build_cash_registers()
 
-    clients_lists = pygame.sprite.Group()
-
-    for x in range(0,20):
-        x = random.randrange(0, width , 1)
-        y = random.randrange(0, (height / 2), 1)
-        infected = random.random() < 0.2
-        client = Client(position=Vector(x, y), infected=infected, target_cash_register=random.choice(cash_register_list)),
-        clients_lists.add(client)
+    clients_lists = build_client_list(cash_register_list)
 
     while running:
 
@@ -87,6 +84,18 @@ def main():
         pygame.display.update()
 
     pygame.quit()
+
+
+def build_client_list(cash_register_list):
+    clients_lists = pygame.sprite.Group()
+    for x in range(0, 20):
+        x = random.randrange(0, width, 1)
+        y = random.randrange(0, (height / 2), 1)
+        infected = random.random() < 0.2
+        client = Client(position=Vector(x, y), infected=infected,
+                        target_cash_register=random.choice(cash_register_list)),
+        clients_lists.add(client)
+    return clients_lists
 
 
 def build_cash_registers():
