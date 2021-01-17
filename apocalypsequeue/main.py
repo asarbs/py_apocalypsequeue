@@ -17,7 +17,7 @@ play = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
-BACKGROUND_COLOR = (128, 128, 128)
+BACKGROUND_COLOR = (228, 228, 228)
 
 FPS = 60
 
@@ -27,7 +27,7 @@ def get_infection(client_list):
         for c2 in client_list:
             if not c1 == c2 and not c1.isInfected():
                 distance = c1.getClientDistance(c2)
-                if c2.isInfected() and distance < 10 and random.random() < 0.1:
+                if c2.isInfected() and distance < 15 and random.random() < 0.1:
                     c1.infect()
 
 
@@ -48,6 +48,10 @@ def main_event_loop(client_list):
             logging.debug("client {} collided with {} clients".format(client,len(list_of_collided_clients)))
             if len(list_of_collided_clients) > 0:
                 client.move_randomly()
+
+            if client.isInQueue():
+                client.getInLine()
+
 
 
 def draw_cash_register(screen, cash_register_list):
@@ -88,7 +92,7 @@ def main():
 
 def build_client_list(cash_register_list):
     clients_lists = pygame.sprite.Group()
-    for x in range(0, 20):
+    for x in range(0, 40):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2

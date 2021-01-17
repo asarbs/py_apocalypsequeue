@@ -24,6 +24,7 @@ class Client(pygame.sprite.Sprite):
         self.__position = position
         self.__target_cash_register = target_cash_register
         self.__infected = infected
+        self.__isInQueue = False
 
         self.image = Client.zombie_img if self.__infected else Client.people_img
         self.rect = self.image.get_rect()
@@ -41,6 +42,8 @@ class Client(pygame.sprite.Sprite):
         return hash(str(__class__) * self.__id)
 
     def move_and_bounce(self, client_list):
+        if self.__isInQueue:
+            return
         destination = self.__target_cash_register.getPosVector() - self.__position
         if destination.getLength() > 5:
             vec_to = destination.getUnitVecotr() * Client.step_size
@@ -55,8 +58,9 @@ class Client(pygame.sprite.Sprite):
         self.rect.move_ip(vec_to.getX(), vec_to.getY())
 
     def move_randomly(self):
+        if self.__isInQueue:
+            return
         vector = Vector(random.choice(Client.random_direction), random.choice(Client.random_direction))
-
         vec_to = vector.getUnitVecotr() * Client.step_size
         self.__move(vec_to)
 
@@ -74,22 +78,35 @@ class Client(pygame.sprite.Sprite):
         self.__infected = True
         self.image = Client.zombie_img if self.__infected else Client.people_img
 
+    def isInQueue(self):
+        destination = self.__target_cash_register.getPosVector() - self.__position
+        return destination.getLength() < 4
+
+    def getInLine(self):
+        self.__isInQueue = True
+        self.__target_cash_register.setInQueue()
+
 
 class CashRegister:
     count = 1
     cs_img = pygame.image.load("icons/cr.png")
+    queue_step = Vector(0, 10)
 
     def __init__(self, position=Vector(0, 0)):
         self.__id = CashRegister.count
         self.__position = position
+        self.__queue = position
         CashRegister.count += 1
 
     def getPos(self):
-        return int(self.__position.getX()), int(self.__position.getY())
+        return int(self.__queue.getX()), int(self.__queue.getY())
 
     def getPosVector(self):
-        return self.__position
+        return self.__queue
+
+    def setInQueue(self):
+        self.__queue = self.__queue - CashRegister.queue_step
 
     def draw(self, screen):
         logging.debug('CashRegister.draw:{}'.format(self.__id))
-        screen.blit(CashRegister.cs_img, self.getPos())
+        screen.blit(CashRegister.cs_img, (self.__position.getX(), self.__position.getY()))
