@@ -7,25 +7,25 @@ from apocalypse import Client
 from apocalypse import CashRegister
 from Vector import Vector
 
-pygame.init()
-
 logging.basicConfig(level=logging.INFO)
 
 now = datetime.now() # current date and time
+
 date_time = now.strftime("%Y%m%d_%H%M%S")
 filename = '{}.csv'.format(date_time)
 outdate = {}
 
 # parameters:
 screen_size = width, height = 1000, 800
-running = 0
 play = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
+random.seed(now)
 
 BACKGROUND_COLOR = (228, 228, 228)
 
 FPS = 60
+number_of_clients = 40
 
 
 def get_infection(client_list):
@@ -85,7 +85,8 @@ def getStats(clients_lists, time_step):
     global outdate
 
     if time_step not in outdate:
-        outdate[time_step] = {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
+        outdate[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
+    outdate[time_step]["time_step"] += 1
     for c in clients_lists:
         if c.isInfected():
             outdate[time_step]["number_of_infected"] += 1
@@ -98,10 +99,11 @@ def getStats(clients_lists, time_step):
 
 
 def main():
-    global running
     global outdate
+    global number_of_clients
     num_of_repeat = 100
     for num_of_repetition in range(0, num_of_repeat, 1):
+        running = 0
         cash_register_list = build_cash_registers()
         clients_lists = build_client_list(cash_register_list)
         time_step = 0
@@ -119,28 +121,29 @@ def main():
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(FPS)
-            pygame.display.update()
+            #pygame.display.update()
 
     csvfile = open(filename, "w+")
     csvfile.write(
-        "time step;number of infected; number of new infected;number of healthy; number of clients in queue\n")
+        "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue\n")
 
     for time_step in outdate:
         #{"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
-        line = '{};{};{};{};{}\n'.format(time_step,
-                                         (outdate[time_step]["number_of_infected"]/num_of_repeat),
-                                         (outdate[time_step]["number_of_new_infected"]/num_of_repeat),
-                                         (outdate[time_step]["number_of_healthy"]/num_of_repeat),
-                                         (outdate[time_step]["number_of_clients_in_queue"]/num_of_repeat)
+        line = '{};{};{:.2f};{:.2f};{:.2f};{:.2f}\n'.format(time_step,
+                                          outdate[time_step]["time_step"],
+                                         (outdate[time_step]["number_of_infected"]/outdate[time_step]["time_step"]),
+                                         (outdate[time_step]["number_of_new_infected"]/outdate[time_step]["time_step"]),
+                                         (outdate[time_step]["number_of_healthy"]/outdate[time_step]["time_step"]),
+                                         (outdate[time_step]["number_of_clients_in_queue"]/outdate[time_step]["time_step"])
                                          )
-        csvfile.write(line)
+        csvfile.write(line.replace(".", ","))
     csvfile.close()
     pygame.quit()
 
 
 def build_client_list(cash_register_list):
     clients_lists = pygame.sprite.Group()
-    for x in range(0, 40):
+    for x in range(0, number_of_clients):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2
