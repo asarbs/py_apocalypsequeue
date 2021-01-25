@@ -14,9 +14,7 @@ logging.basicConfig(level=logging.INFO)
 now = datetime.now() # current date and time
 date_time = now.strftime("%Y%m%d_%H%M%S")
 filename = '{}.csv'.format(date_time)
-csvfile = open(filename,"w+")
-csvfile.write("time step;number of infected; number of new infected;number of healthy; number of clients in queue\n")
-
+outdate = {}
 
 # parameters:
 screen_size = width, height = 1000, 800
@@ -66,12 +64,12 @@ def draw_cash_register(screen, cash_register_list):
         cash_register.draw(screen)
 
 
-def print_stats(client_list):
+def print_stats(client_list, num_of_repetition):
     infected = 0
     for c1 in client_list:
         if c1.isInfected():
             infected += 1
-    logging.info('infected {} of {} clients'.format(infected, len(client_list)))
+    logging.info('rep:{}, infected {} of {} clients'.format(num_of_repetition, infected, len(client_list)))
 
 
 def stopsimulation(client_list):
@@ -84,57 +82,65 @@ def stopsimulation(client_list):
 
 
 def getStats(clients_lists, time_step):
-    # csvfile.write("time step;number of infected; number of new infected, number of clients in queue")
-    number_of_infected = 0;
-    number_of_new_infected = 0
-    number_of_clients_in_queue = 0
-    number_of_healthy = 0
+    global outdate
+
+    if time_step not in outdate:
+        outdate[time_step] = {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
     for c in clients_lists:
         if c.isInfected():
-            number_of_infected += 1
+            outdate[time_step]["number_of_infected"] += 1
             if not c.canInfect():
-                number_of_new_infected += 1
+                outdate[time_step]["number_of_new_infected"] += 1
         else:
-            number_of_healthy += 1
+            outdate[time_step]["number_of_healthy"] += 1
         if c.standingInQueue():
-            number_of_clients_in_queue += 1
-
-    line = '{};{};{};{};{}\n'.format(time_step,number_of_infected,number_of_new_infected,number_of_healthy,number_of_clients_in_queue)
-    csvfile.write(line)
+            outdate[time_step]["number_of_clients_in_queue"] += 1
 
 
 def main():
     global running
-    cash_register_list = build_cash_registers()
+    global outdate
+    num_of_repeat = 100
+    for num_of_repetition in range(0, num_of_repeat, 1):
+        cash_register_list = build_cash_registers()
+        clients_lists = build_client_list(cash_register_list)
+        time_step = 0
+        while running < 40:
+            main_event_loop(clients_lists)
+            # Fill the background with white
+            screen.fill(BACKGROUND_COLOR)
+            clients_lists.draw(screen)
+            draw_cash_register(screen, cash_register_list)
+            print_stats(clients_lists, num_of_repetition)
+            if stopsimulation(clients_lists):
+                running += 1
+            getStats(clients_lists, time_step)
+            time_step += 1
+            # Flip the display
+            logging.debug('fps:{}'.format(clock.get_fps()))
+            clock.tick(FPS)
+            pygame.display.update()
 
-    clients_lists = build_client_list(cash_register_list)
-    time_step = 0
-    while running < 100:
+    csvfile = open(filename, "w+")
+    csvfile.write(
+        "time step;number of infected; number of new infected;number of healthy; number of clients in queue\n")
 
-        main_event_loop(clients_lists)
-        # Fill the background with white
-        screen.fill(BACKGROUND_COLOR)
-
-        clients_lists.draw(screen)
-
-        draw_cash_register(screen, cash_register_list)
-        print_stats(clients_lists)
-        if stopsimulation(clients_lists):
-            running += 1
-        getStats(clients_lists, time_step)
-        time_step += 1
-        # Flip the display
-        logging.debug('fps:{}'.format(clock.get_fps()))
-        clock.tick(FPS)
-        pygame.display.update()
-
+    for time_step in outdate:
+        #{"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
+        line = '{};{};{};{};{}\n'.format(time_step,
+                                         (outdate[time_step]["number_of_infected"]/num_of_repeat),
+                                         (outdate[time_step]["number_of_new_infected"]/num_of_repeat),
+                                         (outdate[time_step]["number_of_healthy"]/num_of_repeat),
+                                         (outdate[time_step]["number_of_clients_in_queue"]/num_of_repeat)
+                                         )
+        csvfile.write(line)
     csvfile.close()
     pygame.quit()
 
 
 def build_client_list(cash_register_list):
     clients_lists = pygame.sprite.Group()
-    for x in range(0, 100):
+    for x in range(0, 40):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2
