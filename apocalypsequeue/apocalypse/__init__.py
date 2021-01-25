@@ -18,12 +18,13 @@ class Client(pygame.sprite.Sprite):
     step_size = 5.0
     random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
-    def __init__(self, target_cash_register, infected=False, position=Vector(0, 0), idName="0"):
+    def __init__(self, target_cash_register, infected=False, canInfect=False, position=Vector(0, 0), idName="0"):
         pygame.sprite.Sprite.__init__(self)
         self.__id = Client.count
         self.__position = position
         self.__target_cash_register = target_cash_register
         self.__infected = infected
+        self.__canInfect = canInfect
         self.__isInQueue = False
 
         self.image = Client.zombie_img if self.__infected else Client.people_img
@@ -73,6 +74,9 @@ class Client(pygame.sprite.Sprite):
     def isInfected(self):
         return self.__infected
 
+    def canInfect(self):
+        return self.__canInfect
+
     def infect(self):
         logging.warning("Client {} get infection".format(self.__id))
         self.__infected = True
@@ -85,6 +89,9 @@ class Client(pygame.sprite.Sprite):
     def getInLine(self):
         self.__isInQueue = True
         self.__target_cash_register.setInQueue()
+
+    def standingInQueue(self):
+        return self.__isInQueue
 
 
 class CashRegister:
