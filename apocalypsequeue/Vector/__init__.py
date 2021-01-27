@@ -26,6 +26,9 @@ class Vector(object):
     def getList(self):
         return [self.__x, self.__y]
 
+    def getTuple(self):
+        return (self.__x, self.__y)
+
     def getLength(self):
         return math.sqrt(self.__x ** 2 + self.__y ** 2)
 

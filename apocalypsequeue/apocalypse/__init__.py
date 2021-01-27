@@ -4,7 +4,7 @@ from Vector import Vector
 import pygame
 import random
 import logging
-import os
+import math
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -42,7 +42,7 @@ class Client(pygame.sprite.Sprite):
     def __hash__(self):
         return hash(str(__class__) * self.__id)
 
-    def move_and_bounce(self, client_list):
+    def move_and_bounce(self):
         if self.__isInQueue:
             return
         destination = self.__target_cash_register.getPosVector() - self.__position
@@ -64,6 +64,20 @@ class Client(pygame.sprite.Sprite):
         vector = Vector(random.choice(Client.random_direction), random.choice(Client.random_direction))
         vec_to = vector.getUnitVecotr() * Client.step_size
         self.__move(vec_to)
+
+    def move_aside(self, shelf):
+        vec_of_y_left = shelf.rect.left - self.__position.getX()
+        vec_of_y_right = shelf.rect.right - self.__position.getX()
+
+        if abs(vec_of_y_left) < abs(vec_of_y_right):
+            vec_to = Vector(vec_of_y_left - 10, 0)
+            self.__move(vec_to)
+        else:
+            vec_to = Vector(vec_of_y_right, 0)
+            self.__move(vec_to)
+
+
+        logging.debug("client:{}, shelf".format(self.__id, shelf))
 
     def getPos(self):
         return int(self.__position.getX()), int(self.__position.getY())
@@ -117,3 +131,23 @@ class CashRegister:
     def draw(self, screen):
         logging.debug('CashRegister.draw:{}'.format(self.__id))
         screen.blit(CashRegister.cs_img, (self.__position.getX(), self.__position.getY()))
+
+
+class ShopShelf(pygame.sprite.Sprite):
+    count = 1
+
+    def __init__(self, position=Vector(0, 0), size=(40, 200)):
+        pygame.sprite.Sprite.__init__(self)
+        self.__id = ShopShelf.count
+        self.rect = pygame.Rect(position.getTuple(), size)
+        ShopShelf.count += 1
+
+    def __hash__(self):
+        return hash(str(__class__) * self.__id)
+
+    def __eq__(self, other):
+        return self.__id == other.__id
+
+    def draw(self, screen):
+        logging.debug('ShopShelf.draw:{}'.format(self.__id))
+        pygame.draw.rect(screen, GREEN, self.rect)

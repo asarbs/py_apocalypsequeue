@@ -5,6 +5,7 @@ from datetime import datetime
 
 from apocalypse import Client
 from apocalypse import CashRegister
+from apocalypse import ShopShelf
 from Vector import Vector
 
 logging.basicConfig(level=logging.INFO)
@@ -37,7 +38,7 @@ def get_infection(client_list):
                     c1.infect()
 
 
-def main_event_loop(client_list):
+def main_event_loop(client_list, shop_shelf_lists):
     global running
     global play
     for event in pygame.event.get():
@@ -49,11 +50,16 @@ def main_event_loop(client_list):
     if play:
         get_infection(client_list)
         for client in client_list:
-            client.move_and_bounce(client_list)
+            client.move_and_bounce()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
+            list_of_collided_shelf =  pygame.sprite.spritecollide(client, shop_shelf_lists, False)
             logging.debug("client {} collided with {} clients".format(client,len(list_of_collided_clients)))
-            if len(list_of_collided_clients) > 0:
-                client.move_randomly()
+            for c in list_of_collided_clients:
+                if client is not c:
+                    client.move_randomly()
+            for c in list_of_collided_shelf:
+                client.move_aside(c)
+
             if client.isInQueue():
                 client.getInLine()
 
@@ -98,52 +104,69 @@ def getStats(clients_lists, time_step):
             outdate[time_step]["number_of_clients_in_queue"] += 1
 
 
+
+
+
+def draw_shop_shels(screen, shelf_list):
+    for shelf in shelf_list:
+        shelf.draw(screen)
+
 def main():
     global outdate
     global number_of_clients
     num_of_repeat = 100
     for num_of_repetition in range(0, num_of_repeat, 1):
-        running = 0
+
         cash_register_list = build_cash_registers()
         clients_lists = build_client_list(cash_register_list)
+        shelf_list = build_shop_shelf(clients_lists)
         time_step = 0
-        while running < 40:
-            main_event_loop(clients_lists)
+        while time_step < 400:
+            main_event_loop(clients_lists, shelf_list)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
+
+            draw_shop_shels(screen, shelf_list)
             clients_lists.draw(screen)
             draw_cash_register(screen, cash_register_list)
             print_stats(clients_lists, num_of_repetition)
-            if stopsimulation(clients_lists):
-                running += 1
             getStats(clients_lists, time_step)
+
             time_step += 1
+
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(FPS)
             #pygame.display.update()
 
+    save_data_to_file(outdate)
+    pygame.quit()
+
+
+def save_data_to_file(outdate):
     csvfile = open(filename, "w+")
     csvfile.write(
         "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue\n")
-
     for time_step in outdate:
-        #{"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
+        # {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
         line = '{};{};{:.2f};{:.2f};{:.2f};{:.2f}\n'.format(time_step,
-                                          outdate[time_step]["time_step"],
-                                         (outdate[time_step]["number_of_infected"]/outdate[time_step]["time_step"]),
-                                         (outdate[time_step]["number_of_new_infected"]/outdate[time_step]["time_step"]),
-                                         (outdate[time_step]["number_of_healthy"]/outdate[time_step]["time_step"]),
-                                         (outdate[time_step]["number_of_clients_in_queue"]/outdate[time_step]["time_step"])
-                                         )
+                                                            outdate[time_step]["time_step"],
+                                                            (outdate[time_step]["number_of_infected"] /
+                                                             outdate[time_step]["time_step"]),
+                                                            (outdate[time_step]["number_of_new_infected"] /
+                                                             outdate[time_step]["time_step"]),
+                                                            (outdate[time_step]["number_of_healthy"] /
+                                                             outdate[time_step]["time_step"]),
+                                                            (outdate[time_step]["number_of_clients_in_queue"] /
+                                                             outdate[time_step]["time_step"])
+                                                            )
         csvfile.write(line.replace(".", ","))
     csvfile.close()
-    pygame.quit()
 
 
 def build_client_list(cash_register_list):
     clients_lists = pygame.sprite.Group()
-    for x in range(0, number_of_clients):
+    for i in range(0, number_of_clients):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2
@@ -155,11 +178,21 @@ def build_client_list(cash_register_list):
 
 
 def build_cash_registers():
+    space_size = ( width / 3 ) - 50
     return [
-        CashRegister(position=Vector((width / 2), (height - 15))),
-        CashRegister(position=Vector((width / 3), (height - 15))),
-        CashRegister(position=Vector(2 * (width / 3), (height - 15)))
+        CashRegister(position=Vector(1 * space_size, (height - 15))),
+        CashRegister(position=Vector(2 * space_size, (height - 15))),
+        CashRegister(position=Vector(3 * space_size, (height - 15)))
     ]
+
+def build_shop_shelf(clients_lists):
+    num_of_shelfs = 6
+    shop_shelf_lists = pygame.sprite.Group()
+    space_size = (width / num_of_shelfs) - 20
+    for i in range(1,num_of_shelfs + 1):
+        ss = ShopShelf(position=Vector(i * space_size, (height / 2))),
+        shop_shelf_lists.add(ss)
+    return shop_shelf_lists
 
 
 if __name__ == "__main__":
