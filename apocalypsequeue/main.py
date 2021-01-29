@@ -11,8 +11,7 @@ from apocalypse import ShopShelf
 from data import Data
 from Vector import Vector
 
-# logging configuration
-logging.basicConfig(level=logging.INFO)
+
 
 
 
@@ -26,12 +25,22 @@ random.seed(datetime.now())
 
 #constants
 BACKGROUND_COLOR = (228, 228, 228)
-FPS = 60
-number_of_clients = 40
-time_step_max = 400
-num_of_repeat_max = 100
-play_simulation = True
 
+
+#params
+parser = argparse.ArgumentParser()
+parser.add_argument("--fps", help="number of fps for model", dest="fps", nargs='?', default=60, type=int)
+parser.add_argument("--client", help="number of agents in simulation", dest="number_of_clients", nargs='?', default=40, type=int)
+parser.add_argument("--repetition", help="number of repetitions of simulation", dest="num_of_repeat_max", nargs='?', default=100, type=int)
+parser.add_argument("--time", help="number of simulation steps", dest="time_step_max", nargs='?', default=400, type=int)
+parser.add_argument("--play", help="show simulation animation", dest="play_simulation", nargs='?', default=False, type=bool)
+parser.add_argument('-d', '--debug', help="Print lots of debugging statements", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
+parser.add_argument('-v', '--verbose', help="Be verbose", action="store_const", dest="loglevel", const=logging.INFO)
+
+args = parser.parse_args()
+
+# logging configuration
+logging.basicConfig(level=args.loglevel)
 
 def get_infection(client_list):
     for c1 in client_list:
@@ -101,14 +110,14 @@ def draw_shop_shels(screen, shelf_list):
 def main():
     data = Data()
 
-    num_of_repeat = num_of_repeat_max
+    num_of_repeat = args.num_of_repeat_max
     for num_of_repetition in range(0, num_of_repeat, 1):
 
         cash_register_list = build_cash_registers()
         clients_lists = build_client_list(cash_register_list)
         shelf_list = build_shop_shelf(clients_lists)
         time_step = 0
-        while time_step < time_step_max:
+        while time_step < args.time_step_max:
             main_event_loop(clients_lists, shelf_list)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
@@ -123,8 +132,8 @@ def main():
 
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
-            clock.tick(FPS)
-            if play_simulation is True:
+            clock.tick(args.fps)
+            if args.play_simulation is True:
                 pygame.display.update()
 
     data.dump()
@@ -133,7 +142,7 @@ def main():
 
 def build_client_list(cash_register_list):
     clients_lists = pygame.sprite.Group()
-    for i in range(0, number_of_clients):
+    for i in range(0, args.number_of_clients):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < 0.2
