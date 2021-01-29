@@ -1,13 +1,14 @@
 from datetime import datetime
-
+import pygame
 
 class Data:
     now = datetime.now() # current date and time
-    date_time = now.strftime("%Y%m%d_%H%M%S_time")
-    filename = '{}.csv'.format(date_time)
+    date_time = now.strftime("%Y%m%d_%H%M%S")
+    filename = '{}'.format(date_time)
 
     def __init__(self):
         self.outdata = {}
+        self.infectionPos = []
 
     def addStats(self, clients_lists, time_step):
 
@@ -25,8 +26,23 @@ class Data:
             if c.standingInQueue():
                 self.outdata[time_step]["number_of_clients_in_queue"] += 1
 
-    def dump(self):
-        csvfile = open(Data.filename, "w+")
+    def add_infection_params(self, pos):
+        self.infectionPos.append(pos)
+
+    def dump(self, screen):
+        self.__save_time_data()
+        self.__save_pos_data(screen)
+
+    def __save_pos_data(self, screen):
+        posfile = open('{}_pos.csv'.format(Data.filename), "w+")
+        for p in self.infectionPos:
+            posfile.write('{},{}\n'.format(p[0], p[1]))
+            pygame.draw.circle(screen, (255,0,0), p, radius=5)
+        posfile.close()
+        pygame.image.save(screen, '{}.jpeg'.format(Data.filename))
+
+    def __save_time_data(self):
+        csvfile = open('{}_time.csv'.format(Data.filename), "w+")
         csvfile.write(
             "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue\n")
         for time_step in self.outdata:

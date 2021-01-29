@@ -13,9 +13,7 @@ from Vector import Vector
 
 
 
-
-
-# parameters:
+# parameters/globals
 screen_size = width, height = 1000, 800
 play = True
 screen = pygame.display.set_mode(screen_size)
@@ -42,16 +40,17 @@ args = parser.parse_args()
 # logging configuration
 logging.basicConfig(level=args.loglevel)
 
-def get_infection(client_list):
+def get_infection(client_list, data):
     for c1 in client_list:
         for c2 in client_list:
             if not c1 == c2 and not c1.isInfected():
                 distance = c1.getClientDistance(c2)
                 if c2.isInfected() and c2.canInfect() and distance < 15 and random.random() < 0.1:
                     c1.infect()
+                    data.add_infection_params(c1.getPos())
 
 
-def main_event_loop(client_list, shop_shelf_lists):
+def main_event_loop(client_list, shop_shelf_lists, data):
     global running
     global play
     for event in pygame.event.get():
@@ -61,7 +60,7 @@ def main_event_loop(client_list, shop_shelf_lists):
             if event.key == pygame.K_p:
                 play = not play
     if play:
-        get_infection(client_list)
+        get_infection(client_list, data)
         for client in client_list:
             client.move_and_bounce()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
@@ -118,7 +117,7 @@ def main():
         shelf_list = build_shop_shelf(clients_lists)
         time_step = 0
         while time_step < args.time_step_max:
-            main_event_loop(clients_lists, shelf_list)
+            main_event_loop(clients_lists, shelf_list, data)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
 
@@ -136,7 +135,11 @@ def main():
             if args.play_simulation is True:
                 pygame.display.update()
 
-    data.dump()
+    screen.fill(BACKGROUND_COLOR)
+    draw_shop_shels(screen, shelf_list)
+    draw_cash_register(screen, cash_register_list)
+
+    data.dump(screen)
     pygame.quit()
 
 
