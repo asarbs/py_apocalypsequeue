@@ -1,32 +1,36 @@
+from datetime import datetime
 import pygame
 import logging
 import random
-from datetime import datetime
+import argparse
+
 
 from apocalypse import Client
 from apocalypse import CashRegister
 from apocalypse import ShopShelf
+from data import Data
 from Vector import Vector
 
+# logging configuration
 logging.basicConfig(level=logging.INFO)
 
-now = datetime.now() # current date and time
 
-date_time = now.strftime("%Y%m%d_%H%M%S")
-filename = '{}.csv'.format(date_time)
-outdate = {}
 
 # parameters:
 screen_size = width, height = 1000, 800
 play = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
-random.seed(now)
+random.seed(datetime.now())
 
+
+#constants
 BACKGROUND_COLOR = (228, 228, 228)
-
 FPS = 60
 number_of_clients = 40
+time_step_max = 400
+num_of_repeat_max = 100
+play_simulation = True
 
 
 def get_infection(client_list):
@@ -53,7 +57,7 @@ def main_event_loop(client_list, shop_shelf_lists):
             client.move_and_bounce()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
             list_of_collided_shelf =  pygame.sprite.spritecollide(client, shop_shelf_lists, False)
-            logging.debug("client {} collided with {} clients".format(client,len(list_of_collided_clients)))
+            logging.debug("client {} collided with {} clients".format(client, len(list_of_collided_clients)))
             for c in list_of_collided_clients:
                 if client is not c:
                     client.move_randomly()
@@ -62,7 +66,6 @@ def main_event_loop(client_list, shop_shelf_lists):
 
             if client.isInQueue():
                 client.getInLine()
-
 
 
 def draw_cash_register(screen, cash_register_list):
@@ -87,23 +90,6 @@ def stopsimulation(client_list):
     return total == counter
 
 
-def getStats(clients_lists, time_step):
-    global outdate
-
-    if time_step not in outdate:
-        outdate[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
-    outdate[time_step]["time_step"] += 1
-    for c in clients_lists:
-        if c.isInfected():
-            outdate[time_step]["number_of_infected"] += 1
-            if not c.canInfect():
-                outdate[time_step]["number_of_new_infected"] += 1
-        else:
-            outdate[time_step]["number_of_healthy"] += 1
-        if c.standingInQueue():
-            outdate[time_step]["number_of_clients_in_queue"] += 1
-
-
 
 
 
@@ -111,17 +97,18 @@ def draw_shop_shels(screen, shelf_list):
     for shelf in shelf_list:
         shelf.draw(screen)
 
+
 def main():
-    global outdate
-    global number_of_clients
-    num_of_repeat = 100
+    data = Data()
+
+    num_of_repeat = num_of_repeat_max
     for num_of_repetition in range(0, num_of_repeat, 1):
 
         cash_register_list = build_cash_registers()
         clients_lists = build_client_list(cash_register_list)
         shelf_list = build_shop_shelf(clients_lists)
         time_step = 0
-        while time_step < 400:
+        while time_step < time_step_max:
             main_event_loop(clients_lists, shelf_list)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
@@ -130,38 +117,18 @@ def main():
             clients_lists.draw(screen)
             draw_cash_register(screen, cash_register_list)
             print_stats(clients_lists, num_of_repetition)
-            getStats(clients_lists, time_step)
+            data.addStats(clients_lists, time_step)
 
             time_step += 1
 
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(FPS)
-            #pygame.display.update()
+            if play_simulation is True:
+                pygame.display.update()
 
-    save_data_to_file(outdate)
+    data.dump()
     pygame.quit()
-
-
-def save_data_to_file(outdate):
-    csvfile = open(filename, "w+")
-    csvfile.write(
-        "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue\n")
-    for time_step in outdate:
-        # {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
-        line = '{};{};{:.2f};{:.2f};{:.2f};{:.2f}\n'.format(time_step,
-                                                            outdate[time_step]["time_step"],
-                                                            (outdate[time_step]["number_of_infected"] /
-                                                             outdate[time_step]["time_step"]),
-                                                            (outdate[time_step]["number_of_new_infected"] /
-                                                             outdate[time_step]["time_step"]),
-                                                            (outdate[time_step]["number_of_healthy"] /
-                                                             outdate[time_step]["time_step"]),
-                                                            (outdate[time_step]["number_of_clients_in_queue"] /
-                                                             outdate[time_step]["time_step"])
-                                                            )
-        csvfile.write(line.replace(".", ","))
-    csvfile.close()
 
 
 def build_client_list(cash_register_list):
@@ -184,6 +151,7 @@ def build_cash_registers():
         CashRegister(position=Vector(2 * space_size, (height - 15))),
         CashRegister(position=Vector(3 * space_size, (height - 15)))
     ]
+
 
 def build_shop_shelf(clients_lists):
     num_of_shelfs = 6

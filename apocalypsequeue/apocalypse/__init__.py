@@ -108,16 +108,20 @@ class Client(pygame.sprite.Sprite):
         return self.__isInQueue
 
 
-class CashRegister:
+class CashRegister(pygame.sprite.Sprite):
     count = 1
     cs_img = pygame.image.load("icons/cr.png")
     queue_step = Vector(0, 10)
 
     def __init__(self, position=Vector(0, 0)):
+        pygame.sprite.Sprite.__init__(self)
         self.__id = CashRegister.count
         self.__position = position
         self.__queue = position
         CashRegister.count += 1
+
+    def __hash__(self):
+        return hash(str(__class__) * self.__id)
 
     def getPos(self):
         return int(self.__queue.getX()), int(self.__queue.getY())
