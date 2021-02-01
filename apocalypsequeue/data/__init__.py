@@ -81,10 +81,11 @@ class Data:
 
 
         df = pd.DataFrame(df_dic)
+        plt.figure(figsize=(10.24, 8.00), dpi=100)
         number_of_infected, = plt.plot('time_step', 'number_of_infected', data=df, marker='', color='#1f77b4', linewidth=1)
         number_of_new_infected, = plt.plot('time_step', 'number_of_new_infected', data=df, marker='', color='#ff7f0e', linewidth=1)
         number_of_healthy, = plt.plot('time_step', 'number_of_healthy', data=df, marker='', color='#2ca02c', linewidth=1)
         number_of_clients_in_queue, = plt.plot('time_step', 'number_of_clients_in_queue', data=df, marker='', color='#d62728', linewidth=1)
         plt.legend([number_of_infected, number_of_new_infected, number_of_healthy, number_of_clients_in_queue],
                    ['number_of_infected', 'number_of_new_infected', 'number_of_healthy', 'number_of_clients_in_queue'])
-        plt.savefig('{}_time.png'.format(Data.filename))
+        plt.savefig('{}_time.png'.format(Data.filename), dpi=100)
