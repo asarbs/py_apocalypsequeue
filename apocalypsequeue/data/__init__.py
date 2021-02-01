@@ -1,4 +1,7 @@
 from datetime import datetime
+import matplotlib.pyplot as plt
+import pprint
+import pandas as pd
 import pygame
 
 class Data:
@@ -32,6 +35,7 @@ class Data:
     def dump(self, screen):
         self.__save_time_data()
         self.__save_pos_data(screen)
+        self.__save_time_data_plot()
 
     def __save_pos_data(self, screen):
         posfile = open('{}_pos.csv'.format(Data.filename), "w+")
@@ -47,7 +51,7 @@ class Data:
             "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue\n")
         for time_step in self.outdata:
             # {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
-            line = '{};{};{:.2f};{:.2f};{:.2f};{:.2f}\n'.format(time_step,
+            line = '{}|{}|{:.2f}|{:.2f}|{:.2f}|{:.2f}\n'.format(time_step,
                                                                 self.outdata[time_step]["time_step"],
                                                                 (self.outdata[time_step]["number_of_infected"] /
                                                                  self.outdata[time_step]["time_step"]),
@@ -60,3 +64,27 @@ class Data:
                                                                 )
             csvfile.write(line.replace(".", ","))
         csvfile.close()
+
+    def __save_time_data_plot(self):
+        df_dic = {
+            'time_step': self.outdata.keys(),
+            'number_of_infected': [],
+            'number_of_new_infected': [],
+            'number_of_healthy': [],
+            'number_of_clients_in_queue': []
+        }
+        for time_step in self.outdata:
+            df_dic['number_of_infected'].append        (self.outdata[time_step]["number_of_infected"] / self.outdata[time_step]["time_step"])
+            df_dic['number_of_new_infected'].append    (self.outdata[time_step]["number_of_new_infected"] / self.outdata[time_step]["time_step"])
+            df_dic['number_of_healthy'].append         (self.outdata[time_step]["number_of_healthy"] / self.outdata[time_step]["time_step"])
+            df_dic['number_of_clients_in_queue'].append(self.outdata[time_step]["number_of_clients_in_queue"] / self.outdata[time_step]["time_step"])
+
+
+        df = pd.DataFrame(df_dic)
+        number_of_infected, = plt.plot('time_step', 'number_of_infected', data=df, marker='', color='#1f77b4', linewidth=1)
+        number_of_new_infected, = plt.plot('time_step', 'number_of_new_infected', data=df, marker='', color='#ff7f0e', linewidth=1)
+        number_of_healthy, = plt.plot('time_step', 'number_of_healthy', data=df, marker='', color='#2ca02c', linewidth=1)
+        number_of_clients_in_queue, = plt.plot('time_step', 'number_of_clients_in_queue', data=df, marker='', color='#d62728', linewidth=1)
+        plt.legend([number_of_infected, number_of_new_infected, number_of_healthy, number_of_clients_in_queue],
+                   ['number_of_infected', 'number_of_new_infected', 'number_of_healthy', 'number_of_clients_in_queue'])
+        plt.savefig('{}_time.png'.format(Data.filename))
