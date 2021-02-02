@@ -40,17 +40,17 @@ args = parser.parse_args()
 # logging configuration
 logging.basicConfig(level=args.loglevel)
 
-def get_infection(client_list, data):
+def get_infection(client_list, data, time):
     for c1 in client_list:
         for c2 in client_list:
             if not c1 == c2 and not c1.isInfected():
                 distance = c1.getClientDistance(c2)
                 if c2.isInfected() and c2.canInfect() and distance < 15 and random.random() < 0.1:
                     c1.infect()
-                    data.add_infection_params(c1.getPos())
+                    data.add_infection_params(c1.getPos(), time)
 
 
-def main_event_loop(client_list, shop_shelf_lists, data):
+def main_event_loop(client_list, shop_shelf_lists, data, time):
     global running
     global play
     for event in pygame.event.get():
@@ -60,7 +60,7 @@ def main_event_loop(client_list, shop_shelf_lists, data):
             if event.key == pygame.K_p:
                 play = not play
     if play:
-        get_infection(client_list, data)
+        get_infection(client_list, data, time)
         for client in client_list:
             client.move_and_bounce()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
@@ -117,7 +117,8 @@ def main():
         shelf_list = build_shop_shelf(clients_lists)
         time_step = 0
         while time_step < args.time_step_max:
-            main_event_loop(clients_lists, shelf_list, data)
+            data.addTimeData(time_step)
+            main_event_loop(clients_lists, shelf_list, data, time_step)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
 
