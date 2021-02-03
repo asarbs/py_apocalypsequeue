@@ -3,15 +3,26 @@ import matplotlib.pyplot as plt
 import pprint
 import pandas as pd
 import pygame
+import argparse
+import os
+from console_args import CONSOLE_ARGS
+
 
 class Data:
     now = datetime.now() # current date and time
     date_time = now.strftime("%Y%m%d_%H%M%S")
-    filename = '{}'.format(date_time)
+    filename = 'simulation_{}'.format(date_time)
 
     def __init__(self):
         self.outdata = {}
+        self.contact_time = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
         self.infectionPos = []
+
+        if CONSOLE_ARGS.clean == True:
+            for fname in os.listdir("."):
+                if fname.startswith('simulation_'):
+                    os.remove(os.path.join(".", fname))
+
 
     def addTimeData(self, time_step):
         if time_step not in self.outdata:
@@ -37,6 +48,9 @@ class Data:
     def add_infection_params(self, pos, time):
         self.infectionPos.append(pos)
         self.outdata[time]["number_of_infection"] += 1
+
+    def addContactTime(self, distance):
+        self.contact_time[round(distance)] += 1
 
     def dump(self, screen):
         self.__save_time_data()
@@ -86,9 +100,8 @@ class Data:
 
 
         df = pd.DataFrame(df_dic)
-        #plt.figure(figsize=(10.24, 16.00), dpi=100)
-        fig, axs = plt.subplots(2)
-        fig.set_figheight(15)
+        fig, axs = plt.subplots(3)
+        fig.set_figheight(21)
         fig.set_figwidth(15)
 
         number_of_infected, = axs[0].plot('time_step', 'number_of_infected', data=df, marker='', color='#1f77b4', linewidth=1)
@@ -96,6 +109,9 @@ class Data:
         number_of_healthy, = axs[0].plot('time_step', 'number_of_healthy', data=df, marker='', color='#2ca02c', linewidth=1)
         number_of_clients_in_queue, = axs[0].plot('time_step', 'number_of_clients_in_queue', data=df, marker='', color='#d62728', linewidth=1)
         axs[1].bar('time_step', 'number_of_infection', data=df, color='#6f1787')
+
+        contact_time_values = (x / CONSOLE_ARGS.num_of_repeat_max for x in self.contact_time.values())
+        axs[2].bar(range(len(self.contact_time)), list(contact_time_values), color='#6f1787')
 
         axs[0].set_xlabel("Czas [krok symulacji]")
         axs[0].set_ylabel("Liczba klientów")
@@ -106,5 +122,9 @@ class Data:
         axs[1].set_xlabel("Czas [krok symulacji]")
         axs[1].set_ylabel("Liczba infeksji")
         axs[1].set_title("Liczba infekcji w kroku symulacji")
+
+        axs[2].set_xlabel("Dystans")
+        axs[2].set_ylabel("Czas [krok symulacji]")
+        axs[2].set_title("Średni czas spędzony w zagrożonej stefie.")
 
         plt.savefig('{}_time.png'.format(Data.filename), dpi=100)

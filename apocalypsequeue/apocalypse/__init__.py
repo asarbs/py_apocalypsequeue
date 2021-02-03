@@ -26,6 +26,7 @@ class Client(pygame.sprite.Sprite):
         self.__infected = infected
         self.__canInfect = canInfect
         self.__isInQueue = False
+        self.__timeInInfectionArea = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
 
         self.image = Client.zombie_img if self.__infected else Client.people_img
         self.rect = self.image.get_rect()
@@ -76,7 +77,6 @@ class Client(pygame.sprite.Sprite):
             vec_to = Vector(vec_of_y_right, 0)
             self.__move(vec_to)
 
-
         logging.debug("client:{}, shelf".format(self.__id, shelf))
 
     def getPos(self):
@@ -91,10 +91,12 @@ class Client(pygame.sprite.Sprite):
     def canInfect(self):
         return self.__canInfect
 
-    def infect(self):
+    def infect(self, distance):
         logging.warning("Client {} get infection".format(self.__id))
+        self.__timeInInfectionArea[round(distance)] += 1
         self.__infected = True
         self.image = Client.zombie_img if self.__infected else Client.people_img
+        return True
 
     def isInQueue(self):
         destination = self.__target_cash_register.getPosVector() - self.__position
