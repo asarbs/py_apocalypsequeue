@@ -4,7 +4,7 @@ from Vector import Vector
 import pygame
 import random
 import logging
-import math
+from console_args import CONSOLE_ARGS
 
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -26,7 +26,9 @@ class Client(pygame.sprite.Sprite):
         self.__infected = infected
         self.__canInfect = canInfect
         self.__isInQueue = False
-        self.__timeInInfectionArea = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
+        self.__timeInInfectionArea = {}
+        for i in range (0, CONSOLE_ARGS.inf_distance+1):
+            self.__timeInInfectionArea[i] = 0
 
         self.image = Client.zombie_img if self.__infected else Client.people_img
         self.rect = self.image.get_rect()
@@ -91,12 +93,21 @@ class Client(pygame.sprite.Sprite):
     def canInfect(self):
         return self.__canInfect
 
-    def infect(self, distance):
-        logging.warning("Client {} get infection".format(self.__id))
+    def try_infect(self, distance):
         self.__timeInInfectionArea[round(distance)] += 1
-        self.__infected = True
-        self.image = Client.zombie_img if self.__infected else Client.people_img
-        return True
+        infection_threshold = self.__calc_infection_threshold()
+        if infection_threshold > CONSOLE_ARGS.infection_threshold:
+            logging.warning("Client {} get infection with infection_threshold={}".format(self.__id, infection_threshold))
+            self.__infected = True
+            self.image = Client.zombie_img if self.__infected else Client.people_img
+            return True
+        return False
+
+    def __calc_infection_threshold(self):
+        sum = -1
+        for k,v in self.__timeInInfectionArea.items():
+            sum += v * (1 - (k / len(self.__timeInInfectionArea)))
+        return sum
 
     def isInQueue(self):
         destination = self.__target_cash_register.getPosVector() - self.__position

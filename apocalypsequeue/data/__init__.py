@@ -15,7 +15,9 @@ class Data:
 
     def __init__(self):
         self.outdata = {}
-        self.contact_time = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
+        self.contact_time = {}
+        for i in range (0, CONSOLE_ARGS.inf_distance+1):
+            self.contact_time[i] = 0
         self.infectionPos = []
 
         if CONSOLE_ARGS.clean == True:
@@ -101,6 +103,7 @@ class Data:
 
         df = pd.DataFrame(df_dic)
         fig, axs = plt.subplots(3)
+        fig.suptitl("Simulation params: infection_distance {}[j] = {}m; infection_threshold=".format(CONSOLE_ARGS.inf_distance, (3.3 * CONSOLE_ARGS.inf_distance), CONSOLE_ARGS.infection_threshold ))
         fig.set_figheight(21)
         fig.set_figwidth(15)
 

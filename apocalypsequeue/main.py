@@ -23,7 +23,6 @@ random.seed(datetime.now())
 
 #constants
 BACKGROUND_COLOR = (228, 228, 228)
-INFECTION_DISTANCE = 15
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
@@ -33,10 +32,10 @@ def get_infection(client_list, data, time):
         for c2 in client_list:
             if not c1 == c2 and not c1.isInfected():
                 distance = c1.getClientDistance(c2)
-                if c2.isInfected() and c2.canInfect() and distance < INFECTION_DISTANCE and random.random() < 0.1:
+                if c2.isInfected() and c2.canInfect() and distance < CONSOLE_ARGS.inf_distance:
                     data.addContactTime(distance)
-                    c1.infect(distance)
-                    data.add_infection_params(c1.getPos(), time)
+                    if c1.try_infect(distance):
+                        data.add_infection_params(c1.getPos(), time)
 
 
 def main_event_loop(client_list, shop_shelf_lists, data, time):
