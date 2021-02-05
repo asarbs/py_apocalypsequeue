@@ -86,9 +86,6 @@ def stopsimulation(client_list):
     return total == counter
 
 
-
-
-
 def draw_shop_shels(screen, shelf_list):
     for shelf in shelf_list:
         shelf.draw(screen)
@@ -163,7 +160,7 @@ def build_shop_shelf(clients_lists):
     shop_shelf_lists = pygame.sprite.Group()
     space_size = (width / num_of_shelfs) - 20
     for i in range(1,num_of_shelfs + 1):
-        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=(40, 500)),
+        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=(40, 400)),
         shop_shelf_lists.add(ss)
     return shop_shelf_lists
 
