@@ -20,7 +20,6 @@ screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 random.seed(datetime.now())
 
-
 #constants
 BACKGROUND_COLOR = (228, 228, 228)
 
@@ -36,7 +35,6 @@ def get_infection(client_list, data, time):
                     data.addContactTime(distance)
                     if c1.try_infect(distance):
                         data.add_infection_params(c1.getPos(), time)
-
 
 def main_event_loop(client_list, shop_shelf_lists, data, time):
     global running
@@ -136,8 +134,7 @@ def build_client_list(cash_register_list):
         y = random.randrange(0, (height / 2), 1)
         infected = random.random() < CONSOLE_ARGS.init_infec
         canInfect = infected
-        client = Client(position=Vector(x, y), infected=infected, canInfect=canInfect,
-                        target_cash_register=random.choice(cash_register_list)),
+        client = Client(position=Vector(x, y), infected=infected, canInfect=canInfect, target_cash_register=random.choice(cash_register_list)),
         clients_lists.add(client)
     return clients_lists
 
