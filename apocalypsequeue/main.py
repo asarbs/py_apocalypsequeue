@@ -32,7 +32,7 @@ def get_infection(client_list, data, time):
         for c2 in client_list:
             if not c1 == c2 and not c1.isInfected():
                 distance = c1.getClientDistance(c2)
-                if c2.isInfected() and c2.canInfect() and distance < CONSOLE_ARGS.inf_distance:
+                if c2.canInfect() and distance < CONSOLE_ARGS.inf_distance:
                     data.addContactTime(distance)
                     if c1.try_infect(distance):
                         data.add_infection_params(c1.getPos(), time)
@@ -137,7 +137,7 @@ def build_client_list(cash_register_list):
     for i in range(0, CONSOLE_ARGS.number_of_clients):
         x = random.randrange(0, width, 1)
         y = random.randrange(0, (height / 2), 1)
-        infected = random.random() < 0.2
+        infected = random.random() < CONSOLE_ARGS.init_infec
         canInfect = infected
         client = Client(position=Vector(x, y), infected=infected, canInfect=canInfect,
                         target_cash_register=random.choice(cash_register_list)),
@@ -146,11 +146,15 @@ def build_client_list(cash_register_list):
 
 
 def build_cash_registers():
-    space_size = ( width / 3 ) - 50
+    space_size = ( width / 7 ) - 15
     return [
         CashRegister(position=Vector(1 * space_size, (height - 15))),
         CashRegister(position=Vector(2 * space_size, (height - 15))),
-        CashRegister(position=Vector(3 * space_size, (height - 15)))
+        CashRegister(position=Vector(3 * space_size, (height - 15))),
+        CashRegister(position=Vector(4 * space_size, (height - 15))),
+        CashRegister(position=Vector(5 * space_size, (height - 15))),
+        CashRegister(position=Vector(6 * space_size, (height - 15))),
+        CashRegister(position=Vector(7 * space_size, (height - 15)))
     ]
 
 
@@ -159,7 +163,7 @@ def build_shop_shelf(clients_lists):
     shop_shelf_lists = pygame.sprite.Group()
     space_size = (width / num_of_shelfs) - 20
     for i in range(1,num_of_shelfs + 1):
-        ss = ShopShelf(position=Vector(i * space_size, (height / 2))),
+        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=(40, 500)),
         shop_shelf_lists.add(ss)
     return shop_shelf_lists
 

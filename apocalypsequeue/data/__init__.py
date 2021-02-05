@@ -103,7 +103,7 @@ class Data:
 
         df = pd.DataFrame(df_dic)
         fig, axs = plt.subplots(3)
-        fig.suptitl("Simulation params: infection_distance {}[j] = {}m; infection_threshold=".format(CONSOLE_ARGS.inf_distance, (3.3 * CONSOLE_ARGS.inf_distance), CONSOLE_ARGS.infection_threshold ))
+        fig.suptitle("Simulation params: infection_distance {}[j] = {}m; infection_threshold={}".format(CONSOLE_ARGS.inf_distance, round((CONSOLE_ARGS.inf_distance/3.3),2), CONSOLE_ARGS.infection_threshold ))
         fig.set_figheight(21)
         fig.set_figwidth(15)
 
