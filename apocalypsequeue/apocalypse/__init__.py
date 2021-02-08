@@ -14,10 +14,11 @@ YELLOW = (255, 255, 0)
 
 class Client(pygame.sprite.Sprite):
     count = 1
-    people_img = pygame.image.load("icons/person.png")
-    zombie_img = pygame.image.load("icons/zombie.png")
-    step_size = 5.0
+    people_img = pygame.image.load("icons/person_big.png")
+    zombie_img = pygame.image.load("icons/zombie_big.png")
+    step_size = Meter(0.4).get_pixels()
     random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    size = (Meter(1.5).get_pixels(), Meter(1.5).get_pixels())
 
     def __init__(self, target_cash_register, infected=False, canInfect=False, position=Vector(0, 0), idName="0"):
         pygame.sprite.Sprite.__init__(self)
@@ -31,11 +32,15 @@ class Client(pygame.sprite.Sprite):
         for i in range (0, CONSOLE_ARGS.inf_distance+1):
             self.__timeInInfectionArea[i] = 0
 
-        self.image = Client.zombie_img if self.__infected else Client.people_img
+        self.__set_image()
         self.rect = self.image.get_rect()
         self.rect.move_ip(position.getX(), position.getY())
 
         Client.count += 1
+
+    def __set_image(self):
+        self.image = Client.zombie_img if self.__infected else Client.people_img
+        self.image = pygame.transform.scale(self.image, Client.size)
 
     def __str__(self):
         return u'id:{}'.format(self.__id)
@@ -100,7 +105,7 @@ class Client(pygame.sprite.Sprite):
         if infection_threshold > CONSOLE_ARGS.infection_threshold:
             logging.warning("Client {} get infection with infection_threshold={}".format(self.__id, infection_threshold))
             self.__infected = True
-            self.image = Client.zombie_img if self.__infected else Client.people_img
+            self.__set_image()
             return True
         return False
 

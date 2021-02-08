@@ -16,7 +16,7 @@ class Vector(object):
         return Vector(self.__x - o.__x, self.__y - o.__y)
 
     def __mul__(self, o):
-        if isinstance(o, float):
+        if isinstance(o, float) or isinstance(0, int):
             return Vector(o * self.__x, o * self.__y)
         elif isinstance(o, Vector):
             out = self.__x * o.__x + self.__y * o.__y
