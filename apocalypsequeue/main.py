@@ -13,7 +13,7 @@ from system import Meter
 
 
 # parameters/globals
-screen_size = width, height = 1000, 800
+screen_size = width, height = Meter(250).get_pixels(), Meter(200).get_pixels()
 play: bool = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
@@ -75,16 +75,7 @@ def print_stats(client_list, num_of_repetition):
     logging.info('rep:{}, infected {} of {} clients'.format(num_of_repetition, infected, len(client_list)))
 
 
-def stopsimulation(client_list):
-    total = len(client_list)
-    counter = 0
-    for c1 in client_list:
-        if c1.standingInQueue():
-            counter += 1
-    return total == counter
-
-
-def draw_shop_shels(screen_to_draw, shelf_list):
+def draw_shop_shelf(screen_to_draw, shelf_list):
     for shelf in shelf_list:
         shelf.draw(screen_to_draw)
 
@@ -105,7 +96,7 @@ def main():
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
 
-            draw_shop_shels(screen, shelf_list)
+            draw_shop_shelf(screen, shelf_list)
             clients_lists.draw(screen)
             draw_cash_register(screen, cash_register_list)
             print_stats(clients_lists, num_of_repetition)
@@ -120,7 +111,7 @@ def main():
                 pygame.display.update()
 
     screen.fill(BACKGROUND_COLOR)
-    draw_shop_shels(screen, shelf_list)
+    draw_shop_shelf(screen, shelf_list)
     draw_cash_register(screen, cash_register_list)
 
     data.dump(screen)
