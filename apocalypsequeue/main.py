@@ -10,6 +10,7 @@ from apocalypse import ShopShelf
 from console_args import CONSOLE_ARGS
 from data import Data
 from Vector import Vector
+from system import Meter
 
 
 
@@ -156,8 +157,11 @@ def build_shop_shelf(clients_lists):
     num_of_shelfs = 6
     shop_shelf_lists = pygame.sprite.Group()
     space_size = (width / num_of_shelfs) - 20
+
+    size = (Meter(4), Meter(100))
+
     for i in range(1,num_of_shelfs + 1):
-        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=(40, 400)),
+        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=size),
         shop_shelf_lists.add(ss)
     return shop_shelf_lists
 

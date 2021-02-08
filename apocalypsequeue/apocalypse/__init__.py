@@ -1,6 +1,7 @@
 from numpy.distutils.fcompiler.g95 import G95FCompiler
 
 from Vector import Vector
+from system import Meter
 import pygame
 import random
 import logging
@@ -155,8 +156,12 @@ class ShopShelf(pygame.sprite.Sprite):
 
     def __init__(self, position=Vector(0, 0), size=(40, 200)):
         pygame.sprite.Sprite.__init__(self)
+        if not isinstance(size[0], Meter) or not isinstance(size[1], Meter):
+            raise ValueError("invalid type for size of {}".format(__class__))
+
         self.__id = ShopShelf.count
-        self.rect = pygame.Rect(position.getTuple(), size)
+        pixel_size = (size[0].get_pixels(), size[1].get_pixels())
+        self.rect = pygame.Rect(position.getTuple(), pixel_size)
         ShopShelf.count += 1
 
     def __hash__(self):
