@@ -2,7 +2,6 @@ from datetime import datetime
 import pygame
 import logging
 import random
-import argparse
 
 from apocalypse import Client
 from apocalypse import CashRegister
@@ -13,19 +12,20 @@ from Vector import Vector
 from system import Meter
 
 
-
 # parameters/globals
 screen_size = width, height = 1000, 800
-play = True
+play: bool = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 random.seed(datetime.now())
 
-#constants
+
+# constants
 BACKGROUND_COLOR = (228, 228, 228)
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
+
 
 def get_infection(client_list, data, time):
     for c1 in client_list:
@@ -37,12 +37,11 @@ def get_infection(client_list, data, time):
                     if c1.try_infect(distance):
                         data.add_infection_params(c1.getPos(), time)
 
+
 def main_event_loop(client_list, shop_shelf_lists, data, time):
-    global running
     global play
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
                 play = not play
@@ -51,7 +50,7 @@ def main_event_loop(client_list, shop_shelf_lists, data, time):
         for client in client_list:
             client.move_and_bounce()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
-            list_of_collided_shelf =  pygame.sprite.spritecollide(client, shop_shelf_lists, False)
+            list_of_collided_shelf = pygame.sprite.spritecollide(client, shop_shelf_lists, False)
             logging.debug("client {} collided with {} clients".format(client, len(list_of_collided_clients)))
             for c in list_of_collided_clients:
                 if client is not c:
@@ -63,9 +62,9 @@ def main_event_loop(client_list, shop_shelf_lists, data, time):
                 client.getInLine()
 
 
-def draw_cash_register(screen, cash_register_list):
+def draw_cash_register(screen_to_draw, cash_register_list):
     for cash_register in cash_register_list:
-        cash_register.draw(screen)
+        cash_register.draw(screen_to_draw)
 
 
 def print_stats(client_list, num_of_repetition):
@@ -85,9 +84,9 @@ def stopsimulation(client_list):
     return total == counter
 
 
-def draw_shop_shels(screen, shelf_list):
+def draw_shop_shels(screen_to_draw, shelf_list):
     for shelf in shelf_list:
-        shelf.draw(screen)
+        shelf.draw(screen_to_draw)
 
 
 def main():
@@ -141,7 +140,7 @@ def build_client_list(cash_register_list):
 
 
 def build_cash_registers():
-    space_size = ( width / 7 ) - 15
+    space_size = (width / 7) - 15
     return [
         CashRegister(position=Vector(1 * space_size, (height - 15))),
         CashRegister(position=Vector(2 * space_size, (height - 15))),
@@ -154,13 +153,13 @@ def build_cash_registers():
 
 
 def build_shop_shelf(clients_lists):
-    num_of_shelfs = 6
+    num_of_shelves = 6
     shop_shelf_lists = pygame.sprite.Group()
-    space_size = (width / num_of_shelfs) - 20
+    space_size = (width / num_of_shelves) - 20
 
     size = (Meter(4), Meter(100))
 
-    for i in range(1,num_of_shelfs + 1):
+    for i in range(1, num_of_shelves + 1):
         ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=size),
         shop_shelf_lists.add(ss)
     return shop_shelf_lists
