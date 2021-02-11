@@ -46,55 +46,55 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.__color = PINK
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.__color, self.rect.center, 8)
         for edge in self.edge_list:
             pygame.draw.line(screen, RED, self.rect.center, edge.neighbor.rect.center)
+        pygame.draw.circle(screen, self.__color, self.rect.center, 4)
 
     def get_id(self):
         return self.__id
 
 
 def build_nav_graph(screen_size):
-    build_nav_graph_group = pygame.sprite.Group()
-    nav_graph_dic = {}
-    divide = 6
-    screen_width_step = math.floor(screen_size[0] / divide)
-    screen_height_step = math.floor(screen_size[1] / divide)
-    array = [0] * (divide)
-    for i in range(divide):
-        array[i] = [0] * (divide)
-    xi = 0
-    for x in range(screen_width_step, screen_size[0], screen_width_step):
-        yi = 0
-        for y in range(screen_height_step, screen_size[1], screen_height_step):
-            nav_graph_node = NavGraphNode(Vector(x - (screen_width_step/2), y - (screen_height_step/2)))
-            build_nav_graph_group.add(nav_graph_node)
-            nav_graph_dic[nav_graph_node.get_id()] = nav_graph_node
-            array[xi][yi] = nav_graph_node
-            yi += 1
-        xi += 1
+    array, build_nav_graph_group, nav_graph_dic = __build_nav_graph_grid(screen_size)
 
     for node_x in range(len(array)):
         for node_y in range(len(array[node_x])):
             node = array[node_x][node_y]
 
-            if node_x - 1 > 0 :
-                node_top = array[node_x - 1][node_y]
-                node.add_neighbor(node_top)
+            for i in [-1, 0, 1]:
+                for j in [-1, 0, 1]:
+                    if not(i == 0 and j == 0):
+                        node_to_x = node_x + i
+                        node_to_y = node_y + j
+                        if node_to_x >= 0 and node_to_y >= 0:
+                            try:
+                                node_to = array[node_to_x][node_to_y]
+                                node.add_neighbor(node_to)
+                            except IndexError:
+                                pass
 
-            if node_x + 1 < len(array):
-                node_bottom = array[node_x + 1][node_y]
-                node.add_neighbor(node_bottom)
-
-            if node_y - 1 > 0:
-                node_left = array[node_x][node_y - 1]
-                node.add_neighbor(node_left)
-
-            if node_y + 1 < len(array[node_x]):
-                node_right = array[node_x][node_y + 1]
-                node.add_neighbor(node_right)
 
     return nav_graph_dic, build_nav_graph_group
+
+
+def __build_nav_graph_grid(screen_size):
+    build_nav_graph_group = pygame.sprite.Group()
+    nav_graph_dic = {}
+    divide = 20
+    screen_width_step = math.floor(screen_size[0] / divide)
+    screen_height_step = math.floor(screen_size[1] / divide)
+    array = [0] * (divide)
+    for i in range(divide):
+        array[i] = [0] * (divide)
+    x_start = screen_width_step / 2
+    y_start = screen_height_step / 2
+    for x in range(0, divide, 1):
+        for y in range(0, divide, 1):
+            nav_graph_node = NavGraphNode(Vector(x_start + (screen_width_step * x), y_start + (screen_height_step * y)))
+            build_nav_graph_group.add(nav_graph_node)
+            nav_graph_dic[nav_graph_node.get_id()] = nav_graph_node
+            array[x][y] = nav_graph_node
+    return array, build_nav_graph_group, nav_graph_dic
 
 
 def get_min(Q):
