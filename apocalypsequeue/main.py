@@ -5,6 +5,7 @@ import random
 
 from world import build_sim_world
 from console_args import CONSOLE_ARGS
+from system.pathfinding import build_nav_graph
 from data import Data
 from system import Meter
 
@@ -84,6 +85,7 @@ def main():
     for num_of_repetition in range(0, num_of_repeat, 1):
 
         cash_register_list, clients_lists, shelf_list = build_sim_world(width, height)
+        nav_graph = build_nav_graph(screen_size, shelf_list.sprites())
         time_step = 0
         while time_step < CONSOLE_ARGS.time_step_max:
             data.addTimeData(time_step)

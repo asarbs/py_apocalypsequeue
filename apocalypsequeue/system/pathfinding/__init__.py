@@ -85,7 +85,7 @@ def build_nav_graph(screen_size, shelves):
 def __if_point_in_shelf(x_pos, y_pos, shelves):
     counter = 0
     for shelf in shelves:
-        if not shelf.collidepoint(x_pos, y_pos):
+        if not shelf.rect.collidepoint(x_pos, y_pos):
             counter += 1
     return counter == len(shelves)
 
