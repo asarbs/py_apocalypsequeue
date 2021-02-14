@@ -144,9 +144,8 @@ def dijkstras_algorithm(nav_graph, start_node, end_node):
     step = end_node.get_id()
     while step is not start_node.get_id():
         x = poprzednik[step]
-        print('x={}, step={}, start={}, end={}'.format(x, step, start_node, end_node))
-        path.append(x)
+        path.append(nav_graph[x])
         step = x
+    path.reverse()
 
-    for p in path:
-        nav_graph[p].mark_path()
+    return path

@@ -50,7 +50,9 @@ def main():
             end_node = nav_graph_dic[selected_node_id]
             end_node.mark()
         if start_node != -1 and end_node != -1 and not executed :
-            dijkstras_algorithm(nav_graph_dic, start_node, end_node)
+            path = dijkstras_algorithm(nav_graph_dic, start_node, end_node)
+            for p in path:
+                p.mark_path()
             executed = True
 
         for node in nav_graph_group:
