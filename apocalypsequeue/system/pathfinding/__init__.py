@@ -96,7 +96,7 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
 def __build_nav_graph_grid(screen_size, shelves):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = 60
+    divide = 80
     screen_width_step = math.floor(screen_size[0] / divide)
     screen_height_step = math.floor(screen_size[1] / divide)
     array = [0] * (divide)
