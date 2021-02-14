@@ -8,7 +8,7 @@ from apocalypse import CashRegister
 from apocalypse import ShopShelf
 from console_args import CONSOLE_ARGS
 from data import Data
-from Vector import Vector
+from system.Vector import Vector
 from system import Meter
 
 

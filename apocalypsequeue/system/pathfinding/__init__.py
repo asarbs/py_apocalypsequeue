@@ -1,7 +1,7 @@
 import pygame
 import math
 import operator
-from Vector import Vector
+from system.Vector import Vector
 
 RED = (255, 0, 0)
 GREEN = (0,255,0)

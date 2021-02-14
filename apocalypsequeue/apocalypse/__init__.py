@@ -1,6 +1,4 @@
-from numpy.distutils.fcompiler.g95 import G95FCompiler
-
-from Vector import Vector
+from system.Vector import Vector
 from system import Meter
 import pygame
 import random
