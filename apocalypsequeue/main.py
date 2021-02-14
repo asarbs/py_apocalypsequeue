@@ -3,12 +3,9 @@ import pygame
 import logging
 import random
 
-from apocalypse import Client
-from apocalypse import CashRegister
-from apocalypse import ShopShelf
+from world import build_sim_world
 from console_args import CONSOLE_ARGS
 from data import Data
-from system.Vector import Vector
 from system import Meter
 
 
@@ -86,9 +83,7 @@ def main():
     num_of_repeat = CONSOLE_ARGS.num_of_repeat_max
     for num_of_repetition in range(0, num_of_repeat, 1):
 
-        cash_register_list = build_cash_registers()
-        clients_lists = build_client_list(cash_register_list)
-        shelf_list = build_shop_shelf(clients_lists)
+        cash_register_list, clients_lists, shelf_list = build_sim_world(width, height)
         time_step = 0
         while time_step < CONSOLE_ARGS.time_step_max:
             data.addTimeData(time_step)
@@ -118,42 +113,7 @@ def main():
     pygame.quit()
 
 
-def build_client_list(cash_register_list):
-    clients_lists = pygame.sprite.Group()
-    for i in range(0, CONSOLE_ARGS.number_of_clients):
-        x = random.randrange(0, width, 1)
-        y = random.randrange(0, (height / 2), 1)
-        infected = random.random() < CONSOLE_ARGS.init_infec
-        canInfect = infected
-        client = Client(position=Vector(x, y), infected=infected, canInfect=canInfect, target_cash_register=random.choice(cash_register_list)),
-        clients_lists.add(client)
-    return clients_lists
 
-
-def build_cash_registers():
-    space_size = (width / 7) - 15
-    return [
-        CashRegister(position=Vector(1 * space_size, (height - 15))),
-        CashRegister(position=Vector(2 * space_size, (height - 15))),
-        CashRegister(position=Vector(3 * space_size, (height - 15))),
-        CashRegister(position=Vector(4 * space_size, (height - 15))),
-        CashRegister(position=Vector(5 * space_size, (height - 15))),
-        CashRegister(position=Vector(6 * space_size, (height - 15))),
-        CashRegister(position=Vector(7 * space_size, (height - 15)))
-    ]
-
-
-def build_shop_shelf(clients_lists):
-    num_of_shelves = 6
-    shop_shelf_lists = pygame.sprite.Group()
-    space_size = (width / num_of_shelves) - 20
-
-    size = (Meter(4), Meter(100))
-
-    for i in range(1, num_of_shelves + 1):
-        ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=size),
-        shop_shelf_lists.add(ss)
-    return shop_shelf_lists
 
 
 if __name__ == "__main__":
