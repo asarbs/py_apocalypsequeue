@@ -3,7 +3,7 @@ import pygame
 import logging
 import random
 
-from world import build_sim_world
+from world import build_sim_world, build_shop_shelf
 from console_args import CONSOLE_ARGS
 from system.pathfinding import build_nav_graph
 from data import Data
@@ -11,7 +11,7 @@ from system import Meter
 
 
 # parameters/globals
-screen_size = width, height = Meter(250).get_pixels(), Meter(200).get_pixels()
+screen_size = width, height = Meter(250).get_pixels(), Meter(250).get_pixels()
 play: bool = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
@@ -81,11 +81,10 @@ def draw_shop_shelf(screen_to_draw, shelf_list):
 def main():
     data = Data()
 
-    num_of_repeat = CONSOLE_ARGS.num_of_repeat_max
-    for num_of_repetition in range(0, num_of_repeat, 1):
-
-        cash_register_list, clients_lists, shelf_list = build_sim_world(width, height)
-        nav_graph = build_nav_graph(screen_size, shelf_list.sprites())
+    for num_of_repetition in range(0, CONSOLE_ARGS.num_of_repeat_max, 1):
+        shelf_list = build_shop_shelf(width, height)
+        nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(screen_size, shelf_list.sprites())
+        cash_register_list, clients_lists = build_sim_world(nav_graph_array, width, height)
         time_step = 0
         while time_step < CONSOLE_ARGS.time_step_max:
             data.addTimeData(time_step)
@@ -102,6 +101,8 @@ def main():
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(CONSOLE_ARGS.fps)
+            # for node in nav_graph_group:
+            #     node.draw(screen)
             if CONSOLE_ARGS.play_simulation is True:
                 pygame.display.update()
 

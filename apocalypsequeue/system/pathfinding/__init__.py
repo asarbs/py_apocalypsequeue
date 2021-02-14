@@ -4,8 +4,8 @@ import operator
 from system.Vector import Vector
 
 RED = (255, 0, 0)
-GREEN = (0,255,0)
-PINK = (248,191,223)
+GREEN = (0, 255, 0)
+PINK = (248, 191, 223)
 
 
 class NavGraphNode(pygame.sprite.Sprite):
@@ -19,7 +19,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         def __str__(self):
             return u'to:{} weight={}'.format(self.neighbor, self.weight)
 
-    def __init__(self, position=Vector(0,0)):
+    def __init__(self, position=Vector(0, 0)):
         pygame.sprite.Sprite.__init__(self)
         if not isinstance(position, Vector):
             raise ValueError("invalid type for position of {}".format(__class__))
@@ -52,11 +52,14 @@ class NavGraphNode(pygame.sprite.Sprite):
     def draw(self, screen):
         for edge in self.edge_list:
             pygame.draw.line(screen, RED, self.rect.center, edge.neighbor.rect.center)
-        radius = 6
+        radius = 2
         pygame.draw.circle(screen, self.__color, self.rect.center, radius)
 
     def get_id(self):
         return self.__id
+
+    def get_pos(self):
+        return self.__position
 
 
 def build_nav_graph(screen_size, shelves):
@@ -68,7 +71,7 @@ def build_nav_graph(screen_size, shelves):
             if isinstance(node, NavGraphNode):
                 for i in [-1, 0, 1]:
                     for j in [-1, 0, 1]:
-                        if not(i == 0 and j == 0):
+                        if not (i == 0 and j == 0):
                             node_to_x = node_x + i
                             node_to_y = node_y + j
                             if node_to_x >= 0 and node_to_y >= 0:
@@ -79,7 +82,7 @@ def build_nav_graph(screen_size, shelves):
                                 except IndexError:
                                     pass
 
-    return nav_graph_dic, build_nav_graph_group
+    return array, nav_graph_dic, build_nav_graph_group
 
 
 def __if_point_in_shelf(x_pos, y_pos, shelves):
@@ -89,10 +92,11 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
             counter += 1
     return counter == len(shelves)
 
+
 def __build_nav_graph_grid(screen_size, shelves):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = 40
+    divide = 50
     screen_width_step = math.floor(screen_size[0] / divide)
     screen_height_step = math.floor(screen_size[1] / divide)
     array = [0] * (divide)
@@ -117,10 +121,11 @@ def get_min(Q):
     del Q[id]
     return id
 
+
 def dijkstras_algorithm(nav_graph, start_node, end_node):
     d = {}
     poprzednik = {}
-    #krok 1 dla wszystkich wierzchołków w grafie ustawiam inf jako odległość od wierzchołka startowego. dla wierzchołka startowego ustawiam 0
+    # krok 1 dla wszystkich wierzchołków w grafie ustawiam inf jako odległość od wierzchołka startowego. dla wierzchołka startowego ustawiam 0
     for node in nav_graph.values():
         d[node.get_id()] = math.inf
         poprzednik[node.get_id()] = None
