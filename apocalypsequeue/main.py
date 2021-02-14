@@ -92,7 +92,7 @@ def main():
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
 
-            draw_world(cash_register_list, clients_lists, shelf_list)
+            draw_world(nav_graph_group, cash_register_list, clients_lists, shelf_list)
             print_stats(clients_lists, num_of_repetition)
             data.addStats(clients_lists, time_step)
 
@@ -101,8 +101,7 @@ def main():
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(CONSOLE_ARGS.fps)
-            for node in nav_graph_group:
-                node.draw(screen)
+
             if CONSOLE_ARGS.play_simulation is True:
                 pygame.display.update()
 
@@ -114,7 +113,11 @@ def main():
     pygame.quit()
 
 
-def draw_world(cash_register_list, clients_lists, shelf_list):
+def draw_world(nav_graph_group, cash_register_list, clients_lists, shelf_list):
+
+    for node in nav_graph_group:
+        node.draw(screen)
+
     draw_shop_shelf(screen, shelf_list)
     clients_lists.draw(screen)
     draw_cash_register(screen, cash_register_list)

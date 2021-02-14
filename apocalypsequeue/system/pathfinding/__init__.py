@@ -3,7 +3,7 @@ import math
 import operator
 from system.Vector import Vector
 
-RED = (255, 0, 0)
+LIGHT_GREY = (200, 200, 200)
 GREEN = (0, 255, 0)
 PINK = (248, 191, 223)
 
@@ -27,7 +27,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.rect = pygame.Rect(position.getTuple(), (5, 5))
         self.__id = NavGraphNode.count
         self.edge_list = []
-        self.__color = RED
+        self.__color = LIGHT_GREY
         NavGraphNode.count += 1
 
     def __hash__(self):
@@ -51,7 +51,7 @@ class NavGraphNode(pygame.sprite.Sprite):
 
     def draw(self, screen):
         for edge in self.edge_list:
-            pygame.draw.line(screen, RED, self.rect.center, edge.neighbor.rect.center)
+            pygame.draw.line(screen, LIGHT_GREY, self.rect.center, edge.neighbor.rect.center)
         radius = 2
         pygame.draw.circle(screen, self.__color, self.rect.center, radius)
 
