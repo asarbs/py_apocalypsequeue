@@ -91,9 +91,7 @@ def main():
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
 
-            draw_shop_shelf(screen, shelf_list)
-            clients_lists.draw(screen)
-            draw_cash_register(screen, cash_register_list)
+            draw_world(cash_register_list, clients_lists, shelf_list)
             print_stats(clients_lists, num_of_repetition)
             data.addStats(clients_lists, time_step)
 
@@ -113,7 +111,10 @@ def main():
     pygame.quit()
 
 
-
+def draw_world(cash_register_list, clients_lists, shelf_list):
+    draw_shop_shelf(screen, shelf_list)
+    clients_lists.draw(screen)
+    draw_cash_register(screen, cash_register_list)
 
 
 if __name__ == "__main__":
