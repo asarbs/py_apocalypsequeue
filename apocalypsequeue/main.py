@@ -46,8 +46,12 @@ def main_event_loop(client_list, shop_shelf_lists, data, time):
         get_infection(client_list, data, time)
         for client in client_list:
             client.move()
-            list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
-            logging.debug("client {} collided with {} clients".format(client, len(list_of_collided_clients)))
+            if client.in_cash_register():
+                logging.info("client {} in cash register".format(client))
+                client_list.remove(client)
+
+            # list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
+            # logging.debug("client {} collided with {} clients".format(client, len(list_of_collided_clients)))
             # for c in list_of_collided_clients:
             #     if client is not c:
             #         client.move_randomly()

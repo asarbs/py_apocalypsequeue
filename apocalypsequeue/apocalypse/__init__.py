@@ -66,6 +66,9 @@ class Client(pygame.sprite.Sprite):
         self.__position += vec_to
         self.rect.move_ip(vec_to.getX(), vec_to.getY())
 
+    def in_cash_register(self):
+        return self.__step_on_path == len(self.__path) - 1
+
     # def move_randomly(self):
     #     if self.__isInQueue:
     #         return
