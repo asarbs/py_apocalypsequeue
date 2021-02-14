@@ -152,11 +152,12 @@ def dijkstras_algorithm(nav_graph_dic, start_node, end_node):
                 Q[u_neighbor.neighbor.get_id()] = alt
 
     path = []
-    step = end_node.get_nav_graph_id()
-    while step is not start_node.get_id():
-        x = poprzednik[step]
+    path.append(nav_graph_dic[end_node.get_nav_graph_id()])
+    stop = end_node.get_nav_graph_id()
+    while stop is not start_node.get_id():
+        x = poprzednik[stop]
         path.append(nav_graph_dic[x])
-        step = x
+        stop = x
     path.reverse()
 
     return path
