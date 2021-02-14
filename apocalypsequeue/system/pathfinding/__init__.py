@@ -1,7 +1,9 @@
 import pygame
 import math
 import operator
+import logging
 from system.Vector import Vector
+from console_args import CONSOLE_ARGS
 
 LIGHT_GREY = (200, 200, 200)
 GREEN = (0, 255, 0)
@@ -66,6 +68,7 @@ class NavGraphNode(pygame.sprite.Sprite):
 
 
 def build_nav_graph(screen_size, shelves):
+    logging.info("start to build nav_graph")
     array, build_nav_graph_group, nav_graph_dic = __build_nav_graph_grid(screen_size, shelves)
 
     for node_x in range(len(array)):
@@ -84,7 +87,7 @@ def build_nav_graph(screen_size, shelves):
                                         node.add_neighbor(node_to)
                                 except IndexError:
                                     pass
-
+    logging.info("end to build nav_graph")
     return array, nav_graph_dic, build_nav_graph_group
 
 
@@ -99,7 +102,7 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
 def __build_nav_graph_grid(screen_size, shelves):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = 100
+    divide = CONSOLE_ARGS.grid_density
     screen_width_step = math.floor(screen_size[0] / divide)
     screen_height_step = math.floor(screen_size[1] / divide)
     array = [0] * (divide)

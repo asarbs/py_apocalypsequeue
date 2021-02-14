@@ -1,6 +1,8 @@
 import random
 import pygame
 import math
+import logging
+import datetime
 from apocalypse import Client, CashRegister, ShopShelf
 from console_args import CONSOLE_ARGS
 from system.Vector import Vector
@@ -26,8 +28,12 @@ def __build_client_list(nav_graph_array, nav_graph_dic, cash_register_list, widt
         canInfect = infected
         start_node = nav_graph_array[x][y]
         target_cash_register = random.choice(cash_register_list)
+        t1 = datetime.datetime.now()
         path = dijkstras_algorithm(nav_graph_dic, start_node, target_cash_register)
+        t2 = datetime.datetime.now()
+        diff = t2-t1
         client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect, target_cash_register=target_cash_register),
+        logging.info("Client {} created path={}".format(client[0],diff))
         clients_lists.add(client)
     return clients_lists
 
@@ -52,7 +58,7 @@ def build_shop_shelf(width, height):
     shop_shelf_lists = pygame.sprite.Group()
     space_size = (width / num_of_shelves) - 20
 
-    size = (Meter(4), Meter(100))
+    size = (Meter(2), Meter(50))
 
     for i in range(1, num_of_shelves + 1):
         ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=size),

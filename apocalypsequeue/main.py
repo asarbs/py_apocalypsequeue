@@ -11,7 +11,7 @@ from system import Meter
 
 
 # parameters/globals
-screen_size = width, height = Meter(250).get_pixels(), Meter(250).get_pixels()
+screen_size = width, height = Meter(150).get_pixels(), Meter(150).get_pixels()
 play: bool = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
@@ -112,9 +112,11 @@ def main():
 
 
 def draw_world(nav_graph_group, cash_register_list, clients_lists, shelf_list):
-
-    for node in nav_graph_group:
-        node.draw(screen)
+    if not CONSOLE_ARGS.play_simulation:
+        return
+    if CONSOLE_ARGS.print_nav_graph:
+        for node in nav_graph_group:
+            node.draw(screen)
 
     draw_shop_shelf(screen, shelf_list)
     clients_lists.draw(screen)

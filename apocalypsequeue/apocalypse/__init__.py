@@ -16,7 +16,7 @@ class Client(pygame.sprite.Sprite):
     zombie_img = pygame.image.load("icons/zombie_big.png")
     #step_size = Meter(0.4).get_pixels()
     #random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-    size = (Meter(5.5).get_pixels(), Meter(5.5).get_pixels())
+    size = (Meter(1.5).get_pixels(), Meter(1.5).get_pixels())
 
     def __init__(self, target_cash_register, start_node, path, infected=False, canInfect=False, idName="0"):
         pygame.sprite.Sprite.__init__(self)
@@ -90,7 +90,7 @@ class Client(pygame.sprite.Sprite):
         return int(self.__position.getX()), int(self.__position.getY())
 
     def getClientDistance(self, other_client):
-        return (self.__position - other_client.__nag_graph_node).getLength()
+        return (self.__position - other_client.__position).getLength()
 
     def isInfected(self):
         return self.__infected
