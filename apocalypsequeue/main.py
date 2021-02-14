@@ -101,8 +101,8 @@ def main():
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
             clock.tick(CONSOLE_ARGS.fps)
-            # for node in nav_graph_group:
-            #     node.draw(screen)
+            for node in nav_graph_group:
+                node.draw(screen)
             if CONSOLE_ARGS.play_simulation is True:
                 pygame.display.update()
 
