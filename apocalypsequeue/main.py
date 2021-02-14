@@ -39,25 +39,23 @@ def get_infection(client_list, data, time):
 def main_event_loop(client_list, shop_shelf_lists, data, time):
     global play
     for event in pygame.event.get():
-
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
                 play = not play
     if play:
         get_infection(client_list, data, time)
         for client in client_list:
-            client.move_and_bounce()
+            client.move()
             list_of_collided_clients = pygame.sprite.spritecollide(client, client_list, False)
-            list_of_collided_shelf = pygame.sprite.spritecollide(client, shop_shelf_lists, False)
             logging.debug("client {} collided with {} clients".format(client, len(list_of_collided_clients)))
-            for c in list_of_collided_clients:
-                if client is not c:
-                    client.move_randomly()
-            for c in list_of_collided_shelf:
-                client.move_aside(c)
+            # for c in list_of_collided_clients:
+            #     if client is not c:
+            #         client.move_randomly()
+            # for c in list_of_collided_shelf:
+            #     client.move_aside(c)
 
-            if client.isInQueue():
-                client.getInLine()
+            # if client.isInQueue():
+            #     client.getInLine()
 
 
 def draw_cash_register(screen_to_draw, cash_register_list):
@@ -84,7 +82,7 @@ def main():
     for num_of_repetition in range(0, CONSOLE_ARGS.num_of_repeat_max, 1):
         shelf_list = build_shop_shelf(width, height)
         nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(screen_size, shelf_list.sprites())
-        cash_register_list, clients_lists = build_sim_world(nav_graph_array, width, height)
+        cash_register_list, clients_lists = build_sim_world(nav_graph_array, nav_graph_dic, width, height)
         time_step = 0
         while time_step < CONSOLE_ARGS.time_step_max:
             data.addTimeData(time_step)

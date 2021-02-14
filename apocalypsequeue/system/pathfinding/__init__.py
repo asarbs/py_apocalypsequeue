@@ -5,7 +5,7 @@ from system.Vector import Vector
 
 LIGHT_GREY = (200, 200, 200)
 GREEN = (0, 255, 0)
-PINK = (248, 191, 223)
+PINK = (199, 21, 133)
 
 
 class NavGraphNode(pygame.sprite.Sprite):
@@ -61,6 +61,9 @@ class NavGraphNode(pygame.sprite.Sprite):
     def get_pos(self):
         return self.__position
 
+    def get_pos_vector(self):
+        return Vector(self.rect.centerx, self.rect.centery)
+
 
 def build_nav_graph(screen_size, shelves):
     array, build_nav_graph_group, nav_graph_dic = __build_nav_graph_grid(screen_size, shelves)
@@ -96,7 +99,7 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
 def __build_nav_graph_grid(screen_size, shelves):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = 80
+    divide = 100
     screen_width_step = math.floor(screen_size[0] / divide)
     screen_height_step = math.floor(screen_size[1] / divide)
     array = [0] * (divide)
@@ -122,11 +125,11 @@ def get_min(Q):
     return id
 
 
-def dijkstras_algorithm(nav_graph, start_node, end_node):
+def dijkstras_algorithm(nav_graph_dic, start_node, end_node):
     d = {}
     poprzednik = {}
     # krok 1 dla wszystkich wierzchołków w grafie ustawiam inf jako odległość od wierzchołka startowego. dla wierzchołka startowego ustawiam 0
-    for node in nav_graph.values():
+    for node in nav_graph_dic.values():
         d[node.get_id()] = math.inf
         poprzednik[node.get_id()] = None
     d[start_node.get_id()] = 0
@@ -134,7 +137,7 @@ def dijkstras_algorithm(nav_graph, start_node, end_node):
     Q = d.copy()
 
     while len(Q) > 0:
-        u_node = nav_graph[get_min(Q)]
+        u_node = nav_graph_dic[get_min(Q)]
         if u_node == end_node:
             break
         u_neighbors = u_node.get_neighbors()
@@ -146,10 +149,10 @@ def dijkstras_algorithm(nav_graph, start_node, end_node):
                 Q[u_neighbor.neighbor.get_id()] = alt
 
     path = []
-    step = end_node.get_id()
+    step = end_node.get_nav_graph_id()
     while step is not start_node.get_id():
         x = poprzednik[step]
-        path.append(nav_graph[x])
+        path.append(nav_graph_dic[x])
         step = x
     path.reverse()
 
