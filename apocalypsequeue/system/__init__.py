@@ -2,7 +2,7 @@ from system.Vector import Vector
 
 
 class Meter:
-    __scale = 6
+    __scale = 20
 
     def __init__(self, m):
         self.__num_of_meters = m

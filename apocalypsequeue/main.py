@@ -11,7 +11,7 @@ from system import Meter
 
 
 # parameters/globals
-screen_size = width, height = Meter(150).get_pixels(), Meter(150).get_pixels()
+screen_size = width, height = Meter(49).get_pixels(), Meter(11 * 7.2).get_pixels()
 play: bool = True
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
@@ -20,6 +20,7 @@ random.seed(datetime.now())
 
 # constants
 BACKGROUND_COLOR = (228, 228, 228)
+BACKGROUND_IMG = pygame.image.load("icons/plan01.jpg")
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
@@ -93,6 +94,7 @@ def main():
             main_event_loop(clients_lists, shelf_list, data, time_step)
             # Fill the background with white
             screen.fill(BACKGROUND_COLOR)
+            screen.blit(BACKGROUND_IMG, (0, 0))
 
             draw_world(nav_graph_group, cash_register_list, clients_lists, shelf_list)
             print_stats(clients_lists, num_of_repetition)

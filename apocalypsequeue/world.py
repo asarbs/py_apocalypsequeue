@@ -63,4 +63,7 @@ def build_shop_shelf(width, height):
     for i in range(1, num_of_shelves + 1):
         ss = ShopShelf(position=Vector(i * space_size, (height / 4)), size=size),
         shop_shelf_lists.add(ss)
+
+    ss = ShopShelf(position=Vector(50, 600), size=(Meter(150), Meter(2)))
+    shop_shelf_lists.add(ss)
     return shop_shelf_lists
