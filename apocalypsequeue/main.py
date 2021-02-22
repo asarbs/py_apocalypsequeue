@@ -20,7 +20,7 @@ random.seed(datetime.now())
 
 # constants
 BACKGROUND_COLOR = (228, 228, 228)
-BACKGROUND_IMG = pygame.image.load("icons/plan01.jpg")
+BACKGROUND_IMG = pygame.image.load("maps/plan01.jpg")
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
@@ -104,7 +104,7 @@ def main():
 
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
-            clock.tick(CONSOLE_ARGS.fps)
+            clock.tick(CONSOLE_ARGS.FPS)
 
             if CONSOLE_ARGS.play_simulation is True:
                 pygame.display.update()
