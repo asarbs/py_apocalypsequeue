@@ -24,7 +24,7 @@ class MapEditor(object):
         self.screen.fill(MapEditor.BACKGROUND_COLOR)
 
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE)
-        self.file_browser = FileBrowser((10, 10), ui_manager=self.gui_manager)
+        self.file_browser = FileBrowser(position=(10, 10), ui_manager=self.gui_manager, editor=self)
 
         self.created_rectangles = []
         self.shelf_counter = 0
@@ -32,9 +32,11 @@ class MapEditor(object):
         self.tmp_rec_start_pos = None
         self.edit_mode = False
 
+        self.__map_image = None
+
     def main_loop(self):
         while self.is_running:
-            self.screen.fill(MapEditor.BACKGROUND_COLOR)
+            self.__draw_background()
 
             self.__event_handler()
             self.__draw()
@@ -44,6 +46,16 @@ class MapEditor(object):
             self.gui_manager.draw_ui(self.screen)
 
             pygame.display.update()
+
+    def __draw_background(self):
+        if self.__map_image is not None:
+            logging.debug('{}:'.format(self.__map_image))
+            self.screen.blit(self.__map_image, (0, 0))
+        else:
+            self.screen.fill(MapEditor.BACKGROUND_COLOR)
+
+    def load_map(self, map_file_path):
+        self.__map_image = pygame.image.load(map_file_path)
 
     def __draw(self):
         for rect in self.created_rectangles:
@@ -56,12 +68,12 @@ class MapEditor(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
-            # elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN:
-            #     self.__start_shelf_drawing()
-            # elif self.edit_mode is True and event.type == pygame.MOUSEBUTTONUP:
-            #     self.__stop_shelf_drawing()
-            # elif self.edit_mode is True and event.type == pygame.MOUSEMOTION:
-            #     self.__resize_edited_shelf()
+            elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN:
+                self.__start_shelf_drawing()
+            elif self.edit_mode is True and event.type == pygame.MOUSEBUTTONUP:
+                self.__stop_shelf_drawing()
+            elif self.edit_mode is True and event.type == pygame.MOUSEMOTION:
+                self.__resize_edited_shelf()
             elif event.type == pygame.VIDEORESIZE:
                 self.__screen_resize(event)
 

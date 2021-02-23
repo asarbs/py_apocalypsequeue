@@ -14,21 +14,21 @@ class Data:
     filename = 'simulation_{}'.format(date_time)
 
     def __init__(self):
-        self.outdata = {}
+        self.out_data = {}
         self.contact_time = {}
         for i in range (0, CONSOLE_ARGS.inf_distance+1):
             self.contact_time[i] = 0
         self.infectionPos = []
 
-        if CONSOLE_ARGS.clean == True:
-            for fname in os.listdir("."):
-                if fname.startswith('simulation_'):
-                    os.remove(os.path.join(".", fname))
+        if CONSOLE_ARGS.clean:
+            for f_name in os.listdir("."):
+                if f_name.startswith('simulation_'):
+                    os.remove(os.path.join(".", f_name))
 
 
     def addTimeData(self, time_step):
-        if time_step not in self.outdata:
-            self.outdata[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0,
+        if time_step not in self.out_data:
+            self.out_data[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0,
                                        "number_of_clients_in_queue": 0, "number_of_healthy": 0, "number_of_infection": 0}
 
     def addStats(self, clients_lists, time_step):
@@ -36,20 +36,20 @@ class Data:
         # if time_step not in self.outdata:
         #     self.outdata[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0,
         #                           "number_of_clients_in_queue": 0, "number_of_healthy": 0}
-        self.outdata[time_step]["time_step"] += 1
+        self.out_data[time_step]["time_step"] += 1
         for c in clients_lists:
             if c.isInfected():
-                self.outdata[time_step]["number_of_infected"] += 1
+                self.out_data[time_step]["number_of_infected"] += 1
                 if not c.canInfect():
-                    self.outdata[time_step]["number_of_new_infected"] += 1
+                    self.out_data[time_step]["number_of_new_infected"] += 1
             else:
-                self.outdata[time_step]["number_of_healthy"] += 1
+                self.out_data[time_step]["number_of_healthy"] += 1
             if c.standingInQueue():
-                self.outdata[time_step]["number_of_clients_in_queue"] += 1
+                self.out_data[time_step]["number_of_clients_in_queue"] += 1
 
     def add_infection_params(self, pos, time):
         self.infectionPos.append(pos)
-        self.outdata[time]["number_of_infection"] += 1
+        self.out_data[time]["number_of_infection"] += 1
 
     def addContactTime(self, distance):
         self.contact_time[round(distance)] += 1
@@ -71,34 +71,34 @@ class Data:
         csvfile = open('{}_time.csv'.format(Data.filename), "w+")
         csvfile.write(
             "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue; number_of_infections\n")
-        for time_step in self.outdata:
+        for time_step in self.out_data:
             # {"number_of_infected": 0, "number_of_new_infected": 0, "number_of_clients_in_queue": 0, "number_of_healthy": 0}
             line = '{}|{}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{:.2f}\n'.format(time_step,
-                                                                self.outdata[time_step]["time_step"],
-                                                                (self.outdata[time_step]["number_of_infected"]          / self.outdata[time_step]["time_step"]),
-                                                                (self.outdata[time_step]["number_of_new_infected"]      / self.outdata[time_step]["time_step"]),
-                                                                (self.outdata[time_step]["number_of_healthy"]           / self.outdata[time_step]["time_step"]),
-                                                                (self.outdata[time_step]["number_of_clients_in_queue"]  / self.outdata[time_step]["time_step"]),
-                                                                (self.outdata[time_step]["number_of_infection"]         / self.outdata[time_step]["time_step"])
-                                                                )
+                                                                       self.out_data[time_step]["time_step"],
+                                                                       (self.out_data[time_step]["number_of_infected"] / self.out_data[time_step]["time_step"]),
+                                                                       (self.out_data[time_step]["number_of_new_infected"] / self.out_data[time_step]["time_step"]),
+                                                                       (self.out_data[time_step]["number_of_healthy"] / self.out_data[time_step]["time_step"]),
+                                                                       (self.out_data[time_step]["number_of_clients_in_queue"] / self.out_data[time_step]["time_step"]),
+                                                                       (self.out_data[time_step]["number_of_infection"] / self.out_data[time_step]["time_step"])
+                                                                       )
             csvfile.write(line.replace(".", ","))
         csvfile.close()
 
     def __save_time_data_plot(self):
         df_dic = {
-            'time_step': self.outdata.keys(),
+            'time_step': self.out_data.keys(),
             'number_of_infected': [],
             'number_of_new_infected': [],
             'number_of_healthy': [],
             'number_of_clients_in_queue': [],
             'number_of_infection': []
         }
-        for time_step in self.outdata:
-            df_dic['number_of_infected'].append        (self.outdata[time_step]["number_of_infected"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_new_infected'].append    (self.outdata[time_step]["number_of_new_infected"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_healthy'].append         (self.outdata[time_step]["number_of_healthy"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_clients_in_queue'].append(self.outdata[time_step]["number_of_clients_in_queue"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_infection'].append       (self.outdata[time_step]["number_of_infection"] / self.outdata[time_step]["time_step"])
+        for time_step in self.out_data:
+            df_dic['number_of_infected'].append        (self.out_data[time_step]["number_of_infected"] / self.out_data[time_step]["time_step"])
+            df_dic['number_of_new_infected'].append    (self.out_data[time_step]["number_of_new_infected"] / self.out_data[time_step]["time_step"])
+            df_dic['number_of_healthy'].append         (self.out_data[time_step]["number_of_healthy"] / self.out_data[time_step]["time_step"])
+            df_dic['number_of_clients_in_queue'].append(self.out_data[time_step]["number_of_clients_in_queue"] / self.out_data[time_step]["time_step"])
+            df_dic['number_of_infection'].append       (self.out_data[time_step]["number_of_infection"] / self.out_data[time_step]["time_step"])
 
 
         df = pd.DataFrame(df_dic)
