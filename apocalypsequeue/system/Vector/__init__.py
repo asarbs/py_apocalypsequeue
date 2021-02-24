@@ -6,6 +6,9 @@ class Vector(object):
         self.__x = x;
         self.__y = y
 
+    def __int__(self, pos=(0,0)):
+        self.__init__(pos[0], pos[1])
+
     def __str__(self):
         return u'[{},{}]'.format(self.__x, self.__y)
 
