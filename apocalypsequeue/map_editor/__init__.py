@@ -26,7 +26,7 @@ class MapEditor(object):
         self.screen = pygame.display.set_mode(MapEditor.WINDOWS_SIZE, pygame.RESIZABLE)
         self.screen.fill(MapEditor.BACKGROUND_COLOR)
 
-        self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE)
+        self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE, 'map_editor_theme.json')
         self.file_browser = FileBrowser(position=(10, 10), ui_manager=self.gui_manager, editor=self)
 
         self.created_rectangles = []
