@@ -20,7 +20,7 @@ class Data:
             self.contact_time[i] = 0
         self.infectionPos = []
 
-        if CONSOLE_ARGS.clean == True:
+        if CONSOLE_ARGS.clean:
             for fname in os.listdir("."):
                 if fname.startswith('simulation_'):
                     os.remove(os.path.join(".", fname))

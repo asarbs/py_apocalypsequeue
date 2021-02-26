@@ -1,13 +1,13 @@
-from datetime import datetime
-import pygame
-import logging
-import random
-
-from world import build_sim_world, build_shop_shelf
 from console_args import CONSOLE_ARGS
-from system.pathfinding import build_nav_graph
 from data import Data
+from datetime import datetime
 from system import Meter
+from system.pathfinding import build_nav_graph
+from system.res import resource_path
+from world import build_sim_world, build_shop_shelf
+import logging
+import pygame
+import random
 
 
 # parameters/globals
@@ -20,7 +20,7 @@ random.seed(datetime.now())
 
 # constants
 BACKGROUND_COLOR = (228, 228, 228)
-BACKGROUND_IMG = pygame.image.load("maps/plan01.jpg")
+BACKGROUND_IMG = pygame.image.load(resource_path("maps/plan00.jpg"))
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
@@ -131,3 +131,5 @@ def draw_world(nav_graph_group, cash_register_list, clients_lists, shelf_list):
 
 if __name__ == "__main__":
     main()
+
+

@@ -1,5 +1,6 @@
 from system.Vector import Vector
 from system import Meter
+from system.res import resource_path
 import pygame
 import random
 import logging
@@ -12,8 +13,8 @@ YELLOW = (255, 255, 0)
 
 class Client(pygame.sprite.Sprite):
     count = 1
-    people_img = pygame.image.load("icons/person_big.png")
-    zombie_img = pygame.image.load("icons/zombie_big.png")
+    people_img = pygame.image.load(resource_path("icons/person_big.png"))
+    zombie_img = pygame.image.load(resource_path("icons/zombie_big.png"))
     #step_size = Meter(0.4).get_pixels()
     #random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     size = (Meter(1.5).get_pixels(), Meter(1.5).get_pixels())
@@ -131,7 +132,7 @@ class Client(pygame.sprite.Sprite):
 
 class CashRegister(pygame.sprite.Sprite):
     count = 1
-    cs_img = pygame.image.load("icons/cr.png")
+    cs_img = pygame.image.load(resource_path("icons/cr.png"))
     queue_step = Vector(0, 10)
 
     def __init__(self, node):
