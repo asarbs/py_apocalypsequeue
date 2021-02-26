@@ -1,9 +1,11 @@
-from map_editor.console_args import EDITOR_CONSOLE_ARGS
+from map_editor.editor_console_args import EDITOR_CONSOLE_ARGS
 from map_editor.FileBrowser import FileBrowser
 from system import Vector
 import logging
 import pygame
 import pygame_gui
+
+logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 
 #https://github.com/MyreMylar/pygame_gui_examples/blob/master/windowed_mini_games_app.py#L28
 
@@ -38,6 +40,7 @@ class MapEditor(object):
         self.__right_mouse_pos = None
 
     def main_loop(self):
+        logging.debug("running={}".format(self.is_running))
         while self.is_running:
             self.__draw_background()
 
