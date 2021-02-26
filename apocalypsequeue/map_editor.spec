@@ -7,7 +7,7 @@ added_files = [
     ('icons/*.png', 'icons'),
 ]
 
-a = Analysis(['map_editor.py'],
+a = Analysis(['map_editor_run.py'],
              pathex=['C:\\Users\\asarb\\PycharmProjects\\py_apocalypsequeue\\apocalypsequeue'],
              binaries=[],
              datas=added_files,
@@ -25,8 +25,8 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='map_editor',
-          debug=False,
+          name='map_editor_run',
+          debug=True,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
@@ -38,4 +38,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='map_editor')
+               name='map_editor_run')

@@ -9,5 +9,6 @@ def main():
     map_editor = MapEditor()
     map_editor.main_loop()
 
+
 if __name__ == "__main__":
     main()
