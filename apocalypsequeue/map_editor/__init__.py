@@ -4,6 +4,7 @@ from system import Vector
 import logging
 import pygame
 import pygame_gui
+import pprint
 
 logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 
@@ -36,6 +37,7 @@ class MapEditor(object):
         self.edit_mode = False
 
         self.__map_image = None
+        self.__map_image_name = None
         self.__camera_pos = [0, 0]
         self.__right_mouse_pos = None
 
@@ -59,6 +61,7 @@ class MapEditor(object):
             self.screen.blit(self.__map_image, self.__camera_pos)
 
     def load_map(self, map_file_path):
+        self.__map_image_name = map_file_path.split(".")[0]
         self.__map_image = pygame.image.load(map_file_path)
 
     def __draw(self):
@@ -72,6 +75,7 @@ class MapEditor(object):
     def __event_handler(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.__save()
                 self.is_running = False
             elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0] is True:
                 self.__start_shelf_drawing()
@@ -137,5 +141,15 @@ class MapEditor(object):
             self.__right_mouse_pos = current_mouse_pos
             self.__camera_pos[0] += camera_move.getList()[0]
             self.__camera_pos[1] += camera_move.getList()[1]
+
+    def __save(self):
+        dic = {"shelves": []}
+        for shelf in self.created_rectangles:
+            dic['shelves'].append({'pos': (shelf.top, shelf.left), "dim": shelf.size})
+
+        with  open(self.__map_image_name + ".map", "w+") as outfile:
+            pprint.pprint(dic, outfile)
+
+
 
 
