@@ -104,7 +104,7 @@ def main():
 
             # Flip the display
             logging.debug('fps:{}'.format(clock.get_fps()))
-            clock.tick(CONSOLE_ARGS.FPS)
+            clock.tick(CONSOLE_ARGS.fps)
 
             if CONSOLE_ARGS.play_simulation is True:
                 pygame.display.update()
