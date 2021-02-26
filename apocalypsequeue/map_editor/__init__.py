@@ -1,5 +1,6 @@
 from map_editor.console_args import EDITOR_CONSOLE_ARGS
 from map_editor.FileBrowser import FileBrowser
+from system import Vector
 import logging
 import pygame
 import pygame_gui
@@ -24,7 +25,7 @@ class MapEditor(object):
         self.screen.fill(MapEditor.BACKGROUND_COLOR)
 
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE)
-        self.file_browser = FileBrowser((10, 10), ui_manager=self.gui_manager)
+        self.file_browser = FileBrowser(position=(10, 10), ui_manager=self.gui_manager, editor=self)
 
         self.created_rectangles = []
         self.shelf_counter = 0
@@ -32,9 +33,13 @@ class MapEditor(object):
         self.tmp_rec_start_pos = None
         self.edit_mode = False
 
+        self.__map_image = None
+        self.__camera_pos = [0, 0]
+        self.__right_mouse_pos = None
+
     def main_loop(self):
         while self.is_running:
-            self.screen.fill(MapEditor.BACKGROUND_COLOR)
+            self.__draw_background()
 
             self.__event_handler()
             self.__draw()
@@ -45,9 +50,18 @@ class MapEditor(object):
 
             pygame.display.update()
 
+    def __draw_background(self):
+        self.screen.fill(MapEditor.BACKGROUND_COLOR)
+        if self.__map_image is not None:
+            self.screen.blit(self.__map_image, self.__camera_pos)
+
+    def load_map(self, map_file_path):
+        self.__map_image = pygame.image.load(map_file_path)
+
     def __draw(self):
         for rect in self.created_rectangles:
-            pygame.draw.rect(self.screen, MapEditor.GREEN, rect)
+            rect_to_draw = rect.move(self.__camera_pos)
+            pygame.draw.rect(self.screen, MapEditor.GREEN, rect_to_draw)
         if self.tmp_rec is not None:
             logging.debug(u'tmp_rec.pos={}'.format((self.tmp_rec.top, self.tmp_rec.left, self.tmp_rec.bottom, self.tmp_rec.right)))
             pygame.draw.rect(self.screen, MapEditor.GREEN, self.tmp_rec)
@@ -56,12 +70,19 @@ class MapEditor(object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.is_running = False
-            # elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN:
-            #     self.__start_shelf_drawing()
-            # elif self.edit_mode is True and event.type == pygame.MOUSEBUTTONUP:
-            #     self.__stop_shelf_drawing()
-            # elif self.edit_mode is True and event.type == pygame.MOUSEMOTION:
-            #     self.__resize_edited_shelf()
+            elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0] is True:
+                self.__start_shelf_drawing()
+            elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2] is True:
+                self.__start_move_camera()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if self.edit_mode is True:
+                    self.__stop_shelf_drawing()
+                self.__stop_move_camera()
+            elif event.type == pygame.MOUSEMOTION:
+                if self.edit_mode is True:
+                    self.__resize_edited_shelf()
+                self.__move_camera()
+
             elif event.type == pygame.VIDEORESIZE:
                 self.__screen_resize(event)
 
@@ -80,6 +101,8 @@ class MapEditor(object):
     def __stop_shelf_drawing(self):
         self.edit_mode = False
         if self.tmp_rec is not None:
+            negative_camera_pos = [x * -1 for x in self.__camera_pos]
+            self.tmp_rec.move_ip(negative_camera_pos)
             self.created_rectangles.append(self.tmp_rec.copy())
         self.tmp_rec = None
         self.tmp_rec_start_pos = None
@@ -91,3 +114,25 @@ class MapEditor(object):
             pos = pygame.mouse.get_pos()
             self.tmp_rec = pygame.Rect(pos, (1, 1))
             self.tmp_rec_start_pos = pos
+
+    def __start_move_camera(self):
+        logging.debug('__start_move_camera')
+        pos = pygame.mouse.get_pos()
+        self.__right_mouse_pos = Vector(pos[0], pos[1])
+
+    def __stop_move_camera(self):
+        logging.debug('__stop_move_camera')
+        self.__right_mouse_pos = None
+
+    def __move_camera(self):
+        logging.debug('__move_camera')
+        if self.__right_mouse_pos is not None:
+            pos = pygame.mouse.get_pos()
+            current_mouse_pos = Vector(pos[0], pos[1])
+            camera_move = current_mouse_pos - self.__right_mouse_pos
+            logging.debug('camera_moved={}'.format(camera_move))
+            self.__right_mouse_pos = current_mouse_pos
+            self.__camera_pos[0] += camera_move.getList()[0]
+            self.__camera_pos[1] += camera_move.getList()[1]
+
+

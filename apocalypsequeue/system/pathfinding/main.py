@@ -25,10 +25,7 @@ def event_handler(running, nav_graph_dic):
 
 
 def build_shelves():
-    shelves = []
-    shelves.append(pygame.Rect(300,200, 100, 500))
-    shelves.append(pygame.Rect(300,200, 500, 100))
-    shelves.append(pygame.Rect(600,600, 100, 200))
+    shelves = [pygame.Rect(300, 200, 100, 500), pygame.Rect(300, 200, 500, 100), pygame.Rect(600, 600, 100, 200)]
 
     return shelves
 

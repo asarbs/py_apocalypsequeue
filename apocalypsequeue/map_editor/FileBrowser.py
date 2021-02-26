@@ -10,19 +10,26 @@ class FileButton(pygame_gui.elements.UIButton):
         super(FileButton, self).__init__(relative_rect=pygame.Rect((10, y_pos), (200, 30)), text=text, manager=manager, parent_element=parent_element, container=container)
         self.file_path = file_path
 
+
 class FileBrowser(UIWindow):
-    def __init__(self, position, ui_manager):
+    def __init__(self, position, ui_manager, editor):
         super(FileBrowser, self).__init__(pygame.Rect(position, (320, 240)), ui_manager, window_display_title="map selector", object_id="#map_selector")
         self.is_active = False
         self.file_list = []
         self.button_list = []
+        self.__browse_plans(ui_manager)
+        self.selected_file = None
+        self.__editor = editor
+
+    def __browse_plans(self, ui_manager):
         x = 10
         for subdir, dirs, files in os.walk("maps"):
             for file in files:
                 filepath = subdir + os.sep + file
                 if filepath.endswith(".jpg"):
                     self.file_list.append(filepath)
-                    button = FileButton(y_pos=x, text=file, manager=ui_manager, parent_element=self, container=self, file_path=filepath)
+                    button = FileButton(y_pos=x, text=file, manager=ui_manager, parent_element=self, container=self,
+                                        file_path=filepath) #Buttons creation part should be moved to separate method.
                     x += 35
                     self.button_list.append(button)
                     logging.debug(filepath)
@@ -33,4 +40,7 @@ class FileBrowser(UIWindow):
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 for button in self.button_list:
                     if event.ui_element == button:
-                        logging.debug(event.ui_element.file_path)
+                        logging.debug('loaded map:{}'.format(event.ui_element.file_path))
+                        self.__editor.load_map(event.ui_element.file_path)
+                        return True
+        return False
