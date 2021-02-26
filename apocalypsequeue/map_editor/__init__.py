@@ -28,7 +28,8 @@ class MapEditor(object):
         self.screen.fill(MapEditor.BACKGROUND_COLOR)
 
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE, 'map_editor_theme.json')
-        self.file_browser = FileBrowser(position=(10, 10), ui_manager=self.gui_manager, editor=self)
+        file_browser_pos = (MapEditor.WINDOWS_SIZE[0]/2, MapEditor.WINDOWS_SIZE[1]/2)
+        self.file_browser = FileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, editor=self)
 
         self.created_rectangles = []
         self.shelf_counter = 0
@@ -107,7 +108,7 @@ class MapEditor(object):
 
     def __stop_shelf_drawing(self):
         self.edit_mode = False
-        if self.tmp_rec is not None:
+        if self.tmp_rec is not None and self.tmp_rec.width > 10 and self.tmp_rec.height > 10:
             negative_camera_pos = [x * -1 for x in self.__camera_pos]
             self.tmp_rec.move_ip(negative_camera_pos)
             self.created_rectangles.append(self.tmp_rec.copy())
@@ -147,7 +148,7 @@ class MapEditor(object):
         for shelf in self.created_rectangles:
             dic['shelves'].append({'pos': (shelf.top, shelf.left), "dim": shelf.size})
 
-        with  open(self.__map_image_name + ".map", "w+") as outfile:
+        with open(self.__map_image_name + ".map", "w+") as outfile:
             pprint.pprint(dic, outfile)
 
 
