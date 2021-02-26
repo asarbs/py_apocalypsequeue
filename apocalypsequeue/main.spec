@@ -2,11 +2,15 @@
 
 block_cipher = None
 
+added_files = [
+    ('maps/plan00.jpg', 'maps'),
+    ('icons/*.png', 'icons'),
+]
 
 a = Analysis(['main.py'],
              pathex=['C:\\Users\\asarb\\PycharmProjects\\py_apocalypsequeue\\apocalypsequeue'],
              binaries=[],
-             datas=[],
+             datas=added_files,
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
