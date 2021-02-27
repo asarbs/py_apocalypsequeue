@@ -1,5 +1,6 @@
 from map_editor.editor_console_args import EDITOR_CONSOLE_ARGS
 from map_editor.FileBrowser import FileBrowser
+from map_editor.MapElementToolbar import MapElementToolbar, BrushType
 from system import Vector
 import logging
 import pygame
@@ -18,7 +19,7 @@ class MapEditor(object):
     WINDOWS_SIZE = (1024, 800)
     FPS = 60
     BACKGROUND_COLOR = (0, 0, 0)
-    GREEN = (0, 255, 0)
+    GREEN = pygame.Color(0, 255, 0, 100)
 
     def __init__(self):
         self.is_running = True
@@ -30,6 +31,9 @@ class MapEditor(object):
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE, 'map_editor_theme.json')
         file_browser_pos = (MapEditor.WINDOWS_SIZE[0]/2, MapEditor.WINDOWS_SIZE[1]/2)
         self.file_browser = FileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, editor=self)
+        self.toolbar = MapElementToolbar(position=(5,5), ui_manager=self.gui_manager, editor=self)
+
+        self.__brush = None
 
         self.created_rectangles = []
         self.shelf_counter = 0
@@ -151,6 +155,7 @@ class MapEditor(object):
         with open(self.__map_image_name + ".map", "w+") as outfile:
             pprint.pprint(dic, outfile)
 
-
+    def select_brash(self, brush_type: BrushType):
+        self.__brush = brush_type
 
 
