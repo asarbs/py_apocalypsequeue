@@ -3,9 +3,9 @@ from map_editor.FileBrowser import FileBrowser
 from map_editor.MapElementToolbar import MapElementToolbar, BrushType
 from system import Vector
 import logging
+import pprint
 import pygame
 import pygame_gui
-import pprint
 
 logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 

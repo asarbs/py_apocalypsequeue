@@ -1,5 +1,5 @@
-from pygame_gui.elements import UIWindow
 from enum import Enum
+from pygame_gui.elements import UIWindow
 import logging
 import pygame
 import pygame_gui
