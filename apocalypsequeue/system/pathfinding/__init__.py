@@ -70,7 +70,10 @@ class NavGraphNode(pygame.sprite.Sprite):
         return Vector(self.rect.centerx, self.rect.centery)
 
     def serialization(self):
-        return {'id': self.get_id() , 'pos': (self.rect.top, self.rect.left), "dim": self.rect.size}
+        edge_list_serialization = []
+        for edge in self.edge_list:
+            edge_list_serialization.append(edge.neighbor.get_id())
+        return {'id': self.get_id(), 'pos': (self.rect.top, self.rect.left), "dim": self.rect.size, 'neighbor': edge_list_serialization}
 
 
 def build_nav_graph(screen_size, shelves, nav_point_density):
