@@ -1,35 +1,36 @@
 from map_editor.Brush import BrushType
 from pygame_gui.elements import UIWindow
+import map_editor.Colors as Colors
 import logging
 import pygame
 import pygame_gui
 
 
 class BrushButton(pygame_gui.elements.UIButton):
-    def __init__(self, pos, text, manager, parent_element, container, type: BrushType):
+    def __init__(self, pos, text, manager, parent_element, container, object_id, type: BrushType):
         super(BrushButton, self).__init__(relative_rect=pygame.Rect(pos, (150, 30)), text=text, manager=manager,
-                                          parent_element=parent_element, container=container)
+                                          parent_element=parent_element, container=container, object_id=object_id)
         self.type = type
 
 
 class ShelfButton(BrushButton):
     def __init__(self, pos, manager, parent_element, container):
-        super(ShelfButton, self).__init__(pos, "Shelf", manager, parent_element, container, BrushType.SHELF)
+        super(ShelfButton, self).__init__(pos, "Shelf", manager, parent_element, container, "#"+__class__.__name__, BrushType.SHELF)
 
 
 class NavGraphNodeButton(BrushButton):
     def __init__(self, pos, manager, parent_element, container):
-        super(NavGraphNodeButton, self).__init__(pos, "Node", manager, parent_element, container, BrushType.NAV_GRAPH_NODE)
+        super(NavGraphNodeButton, self).__init__(pos, "Node", manager, parent_element, container, "#"+__class__.__name__, BrushType.NAV_GRAPH_NODE)
 
 
 class EntranceButton(BrushButton):
     def __init__(self, pos, manager, parent_element, container):
-        super(EntranceButton, self).__init__(pos, "Entrance", manager, parent_element, container, BrushType.ENTRANCE)
+        super(EntranceButton, self).__init__(pos, "Entrance", manager, parent_element, container, "#"+__class__.__name__, BrushType.ENTRANCE)
 
 
 class CashRegisterButton(BrushButton):
     def __init__(self, pos, manager, parent_element, container):
-        super(CashRegisterButton, self).__init__(pos, "Cash Register", manager, parent_element, container, BrushType.CASH_REGISTER)
+        super(CashRegisterButton, self).__init__(pos, "Cash Register", manager, parent_element, container, "#"+__class__.__name__, BrushType.CASH_REGISTER)
 
 
 class MapElementToolbar(UIWindow):

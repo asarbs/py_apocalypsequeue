@@ -28,6 +28,35 @@
             "unfilled_bar": "#CCCCCC"
         }
     },
+    "#CashRegisterButton":
+    {
+        "colours":
+        {
+            "normal_border": "#ff00ff"
+        }
+    },
+    "#EntranceButton":
+    {
+        "colours":
+        {
+            "normal_border": "#1affa3"
+        }
+    },
+    "#NavGraphNodeButton":
+    {
+        "colours":
+        {
+            "normal_border": "#fc1803"
+        }
+    },
+    "#ShelfButton":
+    {
+        "colours":
+        {
+            "normal_border": "#fccf03"
+        }
+    },
+
     "#default_shape_style":
     {
         "misc":
