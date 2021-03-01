@@ -3,9 +3,9 @@ import math
 import operator
 import logging
 from system.Vector import Vector
+from system.Colors import NAV_GRAPH_NODE
 from console_args import CONSOLE_ARGS
 
-LIGHT_GREY = (200, 200, 200)
 GREEN = (0, 255, 0)
 PINK = (199, 21, 133)
 
@@ -29,7 +29,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.rect = pygame.Rect(position.getTuple(), (5, 5))
         self.__id = NavGraphNode.count
         self.edge_list = []
-        self.__color = LIGHT_GREY
+        self.__color = NAV_GRAPH_NODE
         NavGraphNode.count += 1
 
     def __hash__(self):
@@ -51,11 +51,14 @@ class NavGraphNode(pygame.sprite.Sprite):
     def mark_path(self):
         self.__color = PINK
 
-    def draw(self, screen):
+    def draw(self, screen, camera_pos=(0, 0)):
+        rect = self.rect.move(camera_pos)
         for edge in self.edge_list:
-            pygame.draw.line(screen, LIGHT_GREY, self.rect.center, edge.neighbor.rect.center)
+            neighbor_rect = edge.neighbor.rect
+            neighbor_rect = neighbor_rect.move(camera_pos)
+            pygame.draw.line(screen, NAV_GRAPH_NODE, rect.center, neighbor_rect.center)
         radius = 2
-        pygame.draw.circle(screen, self.__color, self.rect.center, radius)
+        pygame.draw.circle(screen, self.__color, rect.center, radius)
 
     def get_id(self):
         return self.__id

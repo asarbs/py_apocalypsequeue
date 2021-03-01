@@ -9,7 +9,7 @@ from map_editor.Brush import CashRegisterBrush
 from map_editor.MapElements import NavGraphNode
 from system.pathfinding import build_nav_graph
 from system import Vector
-import map_editor.Colors as Colors
+import system.Colors as Colors
 import logging
 import pprint
 import pygame
@@ -83,7 +83,7 @@ class MapEditor(object):
         nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [], nav_point_density)
         for nodes in nav_graph_array:
             for node in nodes:
-                self.created_map_elements.append(NavGraphNode(node.rect))
+                self.created_map_elements.append(node)
 
     def __draw(self):
         for map_element in self.created_map_elements:

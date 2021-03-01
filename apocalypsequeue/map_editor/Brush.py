@@ -1,5 +1,4 @@
 from enum import Enum
-import map_editor.Colors as Colors
 import logging
 import pygame
 import map_editor.MapElements

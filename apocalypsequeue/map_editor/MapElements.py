@@ -1,5 +1,5 @@
 from enum import Enum
-import map_editor.Colors as Colors
+import system.Colors as Colors
 import pygame
 
 class MapElementType(Enum):
@@ -40,9 +40,8 @@ class NavGraphNode(MapElement):
         if self.get_rect() is not None:
             rect = self.get_rect()
             rect = rect.move(camera_pos)
-            center = rect.center
             radius = 3
-            pygame.draw.circle(screen, color=self.get_color(), center=center, radius=radius)
+            pygame.draw.circle(screen, color=self.get_color(), center=rect.center, radius=radius)
 
 
 class Entrance(MapElement):
