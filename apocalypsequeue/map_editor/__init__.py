@@ -86,26 +86,31 @@ class MapEditor(object):
 
     def __event_handler(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.__save()
-                self.is_running = False
-            elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0] is True:
-                self.__start_creation_of_map_element()
-            elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2] is True:
-                self.__start_move_camera()
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if self.edit_mode is True:
-                    self.__stop_creation_of_map_element()
-                self.__stop_move_camera()
-            elif event.type == pygame.MOUSEMOTION:
-                if self.edit_mode is True:
-                    self.__resize_edited_map_element()
-                self.__move_camera()
-
-            elif event.type == pygame.VIDEORESIZE:
-                self.__screen_resize(event)
-
             self.gui_manager.process_events(event)
+
+            if self.file_browser.check_clicked_inside_or_blocking(event) or self.toolbar.check_clicked_inside_or_blocking(event):
+                logging.debug("gui_manager.process_events")
+            elif self.__map_image is not None:
+                logging.debug("main window process_events")
+                if event.type == pygame.QUIT:
+                    self.__save()
+                    self.is_running = False
+                elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0] is True:
+                    self.__start_creation_of_map_element()
+                elif self.edit_mode is False and event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2] is True:
+                    self.__start_move_camera()
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.edit_mode is True:
+                        self.__stop_creation_of_map_element()
+                    self.__stop_move_camera()
+                elif event.type == pygame.MOUSEMOTION:
+                    if self.edit_mode is True:
+                        self.__resize_edited_map_element()
+                    self.__move_camera()
+                elif event.type == pygame.VIDEORESIZE:
+                    self.__screen_resize(event)
+
+
 
     def __screen_resize(self, event):
         self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
