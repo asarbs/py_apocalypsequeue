@@ -13,7 +13,7 @@ def _parse_arguments():
     parser.add_argument("--infection_threshold", help="threshold of particles which cause infection", dest="infection_threshold", nargs='?', default=0.9, type=float)
     parser.add_argument("--play", help="show simulation animation", dest="play_simulation", nargs='?', default=False, type=bool)
     parser.add_argument("--clean", help="remove old simulation files", dest="clean", nargs='?', default=False, type=bool)
-    parser.add_argument("--nav_grid_density", help="density of nav grid", dest="grid_density", nargs='?', default=80, type=int)
+    #parser.add_argument("--nav_grid_density", help="density of nav grid", dest="grid_density", nargs='?', default=80, type=int)
     parser.add_argument("--print_nav_graph", help="print nav_graph", dest="print_nav_graph", nargs='?', default=False, type=bool)
     parser.add_argument('-d', '--debug', help="Print lots of debugging statements", action="store_const", dest="loglevel", const=logging.DEBUG, default=logging.INFO)
     parser.add_argument('-v', '--verbose', help="Be verbose", action="store_const", dest="loglevel", const=logging.INFO)

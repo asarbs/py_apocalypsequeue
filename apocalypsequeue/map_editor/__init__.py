@@ -75,12 +75,12 @@ class MapEditor(object):
         if self.__map_image is not None:
             self.screen.blit(self.__map_image, self.__camera_pos)
 
-    def load_map_and_update_screen(self, map_file_path):
+    def load_map_and_update_screen(self, map_file_path, nav_point_density):
         self.__map_image_name = map_file_path.split(".")[0]
         self.__map_image = pygame.image.load(map_file_path)
         self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
         self.file_browser.hide()
-        nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [])
+        nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [], nav_point_density)
         for nodes in nav_graph_array:
             for node in nodes:
                 self.created_map_elements.append(NavGraphNode(node.rect))

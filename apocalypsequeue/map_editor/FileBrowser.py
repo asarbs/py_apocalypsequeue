@@ -3,6 +3,7 @@ import logging
 import os
 import pygame
 import pygame_gui
+import math
 
 
 class FileButton(pygame_gui.elements.UIButton):
@@ -20,12 +21,13 @@ class FileBrowser(UIWindow):
         self.is_active = False
         self.file_list = []
         self.button_list = []
+        self.__with_input = self.__with_input_window(ui_manager)
         self.__browse_plans(ui_manager)
         self.selected_file = None
         self.__editor = editor
 
     def __browse_plans(self, ui_manager):
-        x = 10
+        x = 40
         for subdir, dirs, files in os.walk("maps"):
             for file in files:
                 filepath = subdir + os.sep + file
@@ -37,6 +39,10 @@ class FileBrowser(UIWindow):
                     self.button_list.append(button)
                     logging.debug(filepath)
 
+    def __with_input_window(self, ui_manager):
+        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 10), (200, 30)), manager=ui_manager, parent_element=self, container=self)
+        return tmp
+
     def process_event(self, event: pygame.event.Event) -> bool:
         handler = super().process_event(event)
         if event.type == pygame.USEREVENT:
@@ -44,6 +50,10 @@ class FileBrowser(UIWindow):
                 for button in self.button_list:
                     if event.ui_element == button:
                         logging.debug('loaded map:{}'.format(event.ui_element.file_path))
-                        self.__editor.load_map_and_update_screen(event.ui_element.file_path)
+                        if self.__with_input.get_text() is '':
+                            return False
+                        else:
+                            nav_point_density = math.floor(float(self.__with_input.get_text()) / 0.7)
+                        self.__editor.load_map_and_update_screen(event.ui_element.file_path, nav_point_density)
                         return True
         return False

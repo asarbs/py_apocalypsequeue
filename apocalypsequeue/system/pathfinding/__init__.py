@@ -67,9 +67,9 @@ class NavGraphNode(pygame.sprite.Sprite):
         return Vector(self.rect.centerx, self.rect.centery)
 
 
-def build_nav_graph(screen_size, shelves):
+def build_nav_graph(screen_size, shelves, nav_point_density):
     logging.info("start to build nav_graph")
-    array, build_nav_graph_group, nav_graph_dic = __build_nav_graph_grid(screen_size, shelves)
+    array, build_nav_graph_group, nav_graph_dic = __build_nav_graph_grid(screen_size, shelves, nav_point_density)
 
     for node_x in range(len(array)):
         for node_y in range(len(array[node_x])):
@@ -99,10 +99,10 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
     return counter == len(shelves)
 
 
-def __build_nav_graph_grid(screen_size, shelves):
+def __build_nav_graph_grid(screen_size, shelves, nav_point_density):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = CONSOLE_ARGS.grid_density
+    divide = nav_point_density
     screen_width_step = math.floor(screen_size[0] / divide)
     screen_height_step = math.floor(screen_size[1] / divide)
     array = [0] * (divide)
