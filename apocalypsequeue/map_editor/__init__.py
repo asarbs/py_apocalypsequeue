@@ -36,7 +36,7 @@ class MapEditor(object):
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE, 'map_editor_theme.json')
         file_browser_pos = (MapEditor.WINDOWS_SIZE[0]/2, MapEditor.WINDOWS_SIZE[1]/2)
         self.file_browser = FileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, editor=self)
-        self.toolbar = MapElementToolbar(position=(5,5), ui_manager=self.gui_manager, editor=self)
+        self.toolbar = MapElementToolbar(position=(5, 5), ui_manager=self.gui_manager, editor=self)
 
         self.__brush = None
 
