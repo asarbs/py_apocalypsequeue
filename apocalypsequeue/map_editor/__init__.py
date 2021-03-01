@@ -13,6 +13,7 @@ import logging
 import pprint
 import pygame
 import pygame_gui
+import json
 
 logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 
@@ -167,8 +168,8 @@ class MapEditor(object):
                 dic[node_type] = []
             dic[node_type].append(map_element.serialization())
         if self.__map_image_name is not None:
-            with open(self.__map_image_name + ".map", "w+") as outfile:
-                pprint.pprint(dic, outfile)
+            with open(self.__map_image_name + ".map.json", "w+") as outfile:
+                pprint.pprint(json.dumps(dic, indent=2, sort_keys=True), outfile)
 
     def select_brash(self, brush_type: BrushType):
         self.__brush = MapEditor.BRUSH_DIC[brush_type]

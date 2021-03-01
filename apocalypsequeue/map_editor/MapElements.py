@@ -27,7 +27,7 @@ class MapElement:
             pygame.draw.rect(surface=screen, color=self.get_color(), rect=rect)
 
     def serialization(self):
-        return {'pos': (self.__rect.top, self.__rect.left), "dim": self.__rect.size}
+        return {"pos": (self.__rect.top, self.__rect.left), "dim": self.__rect.size}
 
 
 class Shelf(MapElement):

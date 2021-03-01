@@ -73,7 +73,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         edge_list_serialization = []
         for edge in self.edge_list:
             edge_list_serialization.append(edge.neighbor.get_id())
-        return {'id': self.get_id(), 'pos': (self.rect.top, self.rect.left), "dim": self.rect.size, 'neighbor': edge_list_serialization}
+        return {"id": self.get_id(), "pos": (self.rect.top, self.rect.left), "dim": self.rect.size, "neighbor": edge_list_serialization}
 
 
 def build_nav_graph(screen_size, shelves, nav_point_density):
@@ -111,16 +111,19 @@ def __if_point_in_shelf(x_pos, y_pos, shelves):
 def __build_nav_graph_grid(screen_size, shelves, nav_point_density):
     build_nav_graph_group = pygame.sprite.Group()
     nav_graph_dic = {}
-    divide = nav_point_density
-    screen_width_step = math.floor(screen_size[0] / divide)
-    screen_height_step = math.floor(screen_size[1] / divide)
-    array = [0] * (divide)
-    for i in range(divide):
-        array[i] = [0] * (divide)
+    divide_x = nav_point_density[0]
+    divide_y = nav_point_density[1]
+    screen_width_step = math.floor(screen_size[0] / divide_x)
+    screen_height_step = math.floor(screen_size[1] / divide_y)
+    array = [0] * (divide_x)
+    for i in range(divide_x):
+        array[i] = [0] * (divide_y)
+
     x_start = screen_width_step / 2
     y_start = screen_height_step / 2
-    for x in range(0, divide, 1):
-        for y in range(0, divide, 1):
+
+    for x in range(0, divide_x, 1):
+        for y in range(0, divide_y, 1):
             x_pos = x_start + (screen_width_step * x)
             y_pos = y_start + (screen_height_step * y)
             if __if_point_in_shelf(x_pos, y_pos, shelves):

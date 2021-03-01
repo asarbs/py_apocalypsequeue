@@ -21,13 +21,13 @@ class FileBrowser(UIWindow):
         self.is_active = False
         self.file_list = []
         self.button_list = []
-        self.__with_input = self.__with_input_window(ui_manager)
+        self.__input = (self.__with_input_window(ui_manager), self.__height_input_window(ui_manager))
         self.__browse_plans(ui_manager)
         self.selected_file = None
         self.__editor = editor
 
     def __browse_plans(self, ui_manager):
-        x = 40
+        x = 65
         for subdir, dirs, files in os.walk("maps"):
             for file in files:
                 filepath = subdir + os.sep + file
@@ -41,6 +41,12 @@ class FileBrowser(UIWindow):
 
     def __with_input_window(self, ui_manager):
         tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 10), (200, 30)), manager=ui_manager, parent_element=self, container=self)
+        tmp.set_text("width in meters")
+        return tmp
+
+    def __height_input_window(self, ui_manager):
+        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 35), (200, 30)), manager=ui_manager, parent_element=self, container=self)
+        tmp.set_text("height in meters")
         return tmp
 
     def process_event(self, event: pygame.event.Event) -> bool:
@@ -50,10 +56,11 @@ class FileBrowser(UIWindow):
                 for button in self.button_list:
                     if event.ui_element == button:
                         logging.debug('loaded map:{}'.format(event.ui_element.file_path))
-                        if self.__with_input.get_text() is '':
+                        if self.__input[0].get_text() is '' or self.__input[1].get_text() is '':
                             return False
                         else:
-                            nav_point_density = math.floor(float(self.__with_input.get_text()) / 0.7)
-                        self.__editor.load_map_and_update_screen(event.ui_element.file_path, nav_point_density)
+                            nav_point_density_x = math.floor(float(self.__input[0].get_text()) / 0.7)
+                            nav_point_density_y = math.floor(float(self.__input[1].get_text()) / 0.7)
+                        self.__editor.load_map_and_update_screen(event.ui_element.file_path, (nav_point_density_x, nav_point_density_y))
                         return True
         return False
