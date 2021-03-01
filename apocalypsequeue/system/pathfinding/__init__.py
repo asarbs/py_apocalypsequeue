@@ -69,6 +69,9 @@ class NavGraphNode(pygame.sprite.Sprite):
     def get_pos_vector(self):
         return Vector(self.rect.centerx, self.rect.centery)
 
+    def serialization(self):
+        return {'id': self.get_id() , 'pos': (self.rect.top, self.rect.left), "dim": self.rect.size}
+
 
 def build_nav_graph(screen_size, shelves, nav_point_density):
     logging.info("start to build nav_graph")

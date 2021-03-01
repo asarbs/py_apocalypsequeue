@@ -6,9 +6,8 @@ import map_editor.MapElements
 
 class BrushType(Enum):
     SHELF = 1
-    NAV_GRAPH_NODE = 2
-    ENTRANCE = 3
-    CASH_REGISTER = 4
+    ENTRANCE = 2
+    CASH_REGISTER = 3
 
 
 class Brush:

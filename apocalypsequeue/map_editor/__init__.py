@@ -6,7 +6,6 @@ from map_editor.Brush import ShelfBrush
 from map_editor.Brush import NavGraphNodeBrush
 from map_editor.Brush import EntranceBrush
 from map_editor.Brush import CashRegisterBrush
-from map_editor.MapElements import NavGraphNode
 from system.pathfinding import build_nav_graph
 from system import Vector
 import system.Colors as Colors
@@ -27,7 +26,6 @@ class MapEditor(object):
     FPS = 60
     BRUSH_DIC = {
         BrushType.SHELF: ShelfBrush(),
-        BrushType.NAV_GRAPH_NODE: NavGraphNodeBrush(),
         BrushType.ENTRANCE: EntranceBrush(),
         BrushType.CASH_REGISTER: CashRegisterBrush()
     }
@@ -167,7 +165,7 @@ class MapEditor(object):
             node_type = map_element.__class__.__name__
             if node_type not in dic:
                 dic[node_type] = []
-            dic[node_type].append({'pos': (map_element.get_rect().top, map_element.get_rect().left), "dim": map_element.get_rect().size})
+            dic[node_type].append(map_element.serialization())
         if self.__map_image_name is not None:
             with open(self.__map_image_name + ".map", "w+") as outfile:
                 pprint.pprint(dic, outfile)
