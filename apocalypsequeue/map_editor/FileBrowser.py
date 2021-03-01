@@ -56,11 +56,11 @@ class FileBrowser(UIWindow):
                 for button in self.button_list:
                     if event.ui_element == button:
                         logging.debug('loaded map:{}'.format(event.ui_element.file_path))
-                        if self.__input[0].get_text() is '' or self.__input[1].get_text() is '':
+                        if self.__input[0].get_text() == '' or self.__input[1].get_text() == '':
                             return False
                         else:
-                            nav_point_density_x = math.floor(float(self.__input[0].get_text()) / 0.7)
-                            nav_point_density_y = math.floor(float(self.__input[1].get_text()) / 0.7)
+                            nav_point_density_x = math.ceil(float(self.__input[0].get_text()) / 0.7)
+                            nav_point_density_y = math.ceil(float(self.__input[1].get_text()) / 0.7)
                         self.__editor.load_map_and_update_screen(event.ui_element.file_path, (nav_point_density_x, nav_point_density_y))
                         return True
         return False
