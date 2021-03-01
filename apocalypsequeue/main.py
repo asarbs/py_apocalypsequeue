@@ -20,7 +20,7 @@ random.seed(datetime.now())
 
 # constants
 BACKGROUND_COLOR = (228, 228, 228)
-BACKGROUND_IMG = pygame.image.load(resource_path("maps/plan00.jpg"))
+BACKGROUND_IMG = pygame.image.load(resource_path("maps/plan03.jpg"))
 
 # logging configuration
 logging.basicConfig(level=CONSOLE_ARGS.loglevel)
