@@ -41,7 +41,7 @@ class NavGraphNode(MapElement):
             rect = self.get_rect()
             rect = rect.move(camera_pos)
             center = rect.center
-            radius = 5
+            radius = 3
             pygame.draw.circle(screen, color=self.get_color(), center=center, radius=radius)
 
 
