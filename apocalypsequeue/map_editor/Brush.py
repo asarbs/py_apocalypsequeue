@@ -9,6 +9,7 @@ class BrushType(Enum):
     SHELF = 1
     NAV_GRAPH_NODE = 2
     ENTRANCE = 3
+    CASH_REGISTER = 4
 
 
 class Brush:
@@ -61,3 +62,11 @@ class EntranceBrush(Brush):
 
     def get_map_element(self):
         return map_editor.MapElements.Entrance(self._rect)
+
+
+class CashRegisterBrush(Brush):
+    def __init__(self):
+        super(CashRegisterBrush, self).__init__()
+
+    def get_map_element(self):
+        return map_editor.MapElements.CashRegister(self._rect)

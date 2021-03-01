@@ -5,6 +5,7 @@ from map_editor.Brush import BrushType
 from map_editor.Brush import ShelfBrush
 from map_editor.Brush import NavGraphNodeBrush
 from map_editor.Brush import EntranceBrush
+from map_editor.Brush import CashRegisterBrush
 from system import Vector
 import map_editor.Colors as Colors
 import logging
@@ -25,7 +26,8 @@ class MapEditor(object):
     BRUSH_DIC = {
         BrushType.SHELF: ShelfBrush(),
         BrushType.NAV_GRAPH_NODE: NavGraphNodeBrush(),
-        BrushType.ENTRANCE: EntranceBrush()
+        BrushType.ENTRANCE: EntranceBrush(),
+        BrushType.CASH_REGISTER: CashRegisterBrush()
     }
 
     def __init__(self):

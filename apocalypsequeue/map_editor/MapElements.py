@@ -5,6 +5,8 @@ import pygame
 class MapElementType(Enum):
     SHELF = 1
     NAV_GRAPH_NODE = 2
+    ENTRANCE = 3
+    CASH_REGISTER = 4
 
 
 class MapElement:
@@ -46,3 +48,9 @@ class NavGraphNode(MapElement):
 class Entrance(MapElement):
     def __init__(self, rect):
         super(Entrance, self).__init__(rect, Colors.ENTRANCE)
+
+        
+class CashRegister(MapElement):
+    def __init__(self, rect):
+        super(CashRegister, self).__init__(rect, Colors.CASH_REGISTER)
+        
