@@ -121,7 +121,9 @@ class MapEditor(object):
         if self.__brush is not None:
             self.edit_mode = True
             pos = pygame.mouse.get_pos()
+            negative_camera_pos = [x * -1 for x in self.__camera_pos]
             self.__brush.start_drawing(pos)
+            self.__brush.move_ip(negative_camera_pos)
             self.tmp_map_elements_start_pos = pos
 
     def __start_move_camera(self):

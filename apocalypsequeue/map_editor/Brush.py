@@ -31,6 +31,9 @@ class Brush:
         self._rect.height = height
         self._rect.width = width
 
+    def move_ip(self, negative_camera_pos):
+        self._rect.move_ip(negative_camera_pos)
+
 
 class ShelfBrush(Brush):
     def __init__(self):
