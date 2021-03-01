@@ -75,12 +75,10 @@ class MapEditor(object):
 
     def __draw(self):
         for map_element in self.created_map_elements:
-            pygame.draw.rect(self.screen, color=map_element.get_color(), rect=map_element.get_rect())
+            map_element.draw(self.screen)
         if self.__brush is not None:
             map_element = self.__brush.get_map_element()
-            rect = map_element.get_rect()
-            if rect is not None:
-                pygame.draw.rect(self.screen, color=map_element.get_color(), rect=rect)
+            map_element.draw(self.screen)
 
     def __event_handler(self):
         for event in pygame.event.get():
