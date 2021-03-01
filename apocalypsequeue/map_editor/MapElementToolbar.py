@@ -1,6 +1,5 @@
 from map_editor.Brush import BrushType
 from pygame_gui.elements import UIWindow
-import map_editor.Colors as Colors
 import logging
 import pygame
 import pygame_gui
@@ -46,11 +45,14 @@ class MapElementToolbar(UIWindow):
         self.__buttons.append(CashRegisterButton((5, 95), ui_manager, self, self))
 
     def process_event(self, event: pygame.event.Event) -> bool:
+        out = False
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 for button in self.__buttons:
+                    button.unselect()
                     if event.ui_element == button:
                         logging.debug('selected brash:{}'.format(event.ui_element.type))
                         self.__editor.select_brash(event.ui_element.type)
-                        return True
-        return False
+                        event.ui_element.select()
+                        out = True
+        return out

@@ -32,28 +32,36 @@
     {
         "colours":
         {
-            "normal_border": "#ff00ff"
+            "normal_border": "#ff00ff",
+            "hovered_border": "#ff00ff",
+            "selected_border": "#ff00ff"
         }
     },
     "#EntranceButton":
     {
         "colours":
         {
-            "normal_border": "#1affa3"
+            "normal_border": "#1affa3",
+            "hovered_border": "#1affa3",
+            "selected_border": "#1affa3"
         }
     },
     "#NavGraphNodeButton":
     {
         "colours":
         {
-            "normal_border": "#fc1803"
+            "normal_border": "#fc1803",
+            "hovered_border": "#fc1803",
+            "selected_border": "#fc1803"
         }
     },
     "#ShelfButton":
     {
         "colours":
         {
-            "normal_border": "#fccf03"
+            "normal_border": "#fccf03",
+            "hovered_border": "#fccf03",
+            "selected_border": "#fccf03"
         }
     },
 
