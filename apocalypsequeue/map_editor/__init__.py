@@ -75,10 +75,10 @@ class MapEditor(object):
 
     def __draw(self):
         for map_element in self.created_map_elements:
-            map_element.draw(self.screen)
+            map_element.draw(self.screen, self.__camera_pos)
         if self.__brush is not None:
             map_element = self.__brush.get_map_element()
-            map_element.draw(self.screen)
+            map_element.draw(self.screen, self.__camera_pos)
 
     def __event_handler(self):
         for event in pygame.event.get():
