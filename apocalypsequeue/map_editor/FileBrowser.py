@@ -44,6 +44,6 @@ class FileBrowser(UIWindow):
                 for button in self.button_list:
                     if event.ui_element == button:
                         logging.debug('loaded map:{}'.format(event.ui_element.file_path))
-                        self.__editor.load_map(event.ui_element.file_path)
+                        self.__editor.load_map_and_update_screen(event.ui_element.file_path)
                         return True
         return False

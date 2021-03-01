@@ -50,9 +50,9 @@
     {
         "colours":
         {
-            "normal_border": "#fc1803",
-            "hovered_border": "#fc1803",
-            "selected_border": "#fc1803"
+            "normal_border": "#848c86",
+            "hovered_border": "#848c86",
+            "selected_border": "#848c86"
         }
     },
     "#ShelfButton":

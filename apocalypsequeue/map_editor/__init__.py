@@ -6,6 +6,8 @@ from map_editor.Brush import ShelfBrush
 from map_editor.Brush import NavGraphNodeBrush
 from map_editor.Brush import EntranceBrush
 from map_editor.Brush import CashRegisterBrush
+from map_editor.MapElements import NavGraphNode
+from system.pathfinding import build_nav_graph
 from system import Vector
 import map_editor.Colors as Colors
 import logging
@@ -73,9 +75,15 @@ class MapEditor(object):
         if self.__map_image is not None:
             self.screen.blit(self.__map_image, self.__camera_pos)
 
-    def load_map(self, map_file_path):
+    def load_map_and_update_screen(self, map_file_path):
         self.__map_image_name = map_file_path.split(".")[0]
         self.__map_image = pygame.image.load(map_file_path)
+        self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
+        self.file_browser.hide()
+        nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [])
+        for nodes in nav_graph_array:
+            for node in nodes:
+                self.created_map_elements.append(NavGraphNode(node.rect))
 
     def __draw(self):
         for map_element in self.created_map_elements:
@@ -109,8 +117,6 @@ class MapEditor(object):
                     self.__move_camera()
                 elif event.type == pygame.VIDEORESIZE:
                     self.__screen_resize(event)
-
-
 
     def __screen_resize(self, event):
         self.screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)

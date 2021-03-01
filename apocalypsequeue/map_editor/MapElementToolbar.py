@@ -40,9 +40,9 @@ class MapElementToolbar(UIWindow):
 
         self.__buttons = []
         self.__buttons.append(ShelfButton((5, 5), ui_manager, self, self))
-        self.__buttons.append(NavGraphNodeButton((5, 35), ui_manager, self, self))
-        self.__buttons.append(EntranceButton((5, 65), ui_manager, self, self))
-        self.__buttons.append(CashRegisterButton((5, 95), ui_manager, self, self))
+        self.__buttons.append(EntranceButton((5, 35), ui_manager, self, self))
+        self.__buttons.append(CashRegisterButton((5, 65), ui_manager, self, self))
+        self.__buttons.append(NavGraphNodeButton((5, 95), ui_manager, self, self))
 
     def process_event(self, event: pygame.event.Event) -> bool:
         out = False
