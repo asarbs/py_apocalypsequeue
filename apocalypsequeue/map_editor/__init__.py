@@ -145,9 +145,12 @@ class MapEditor(object):
             self.__camera_pos[1] += camera_move.getList()[1]
 
     def __save(self):
-        dic = {"shelves": []}
+        dic = {}
         for map_element in self.created_map_elements:
-            dic['shelves'].append({'pos': (map_element.get_rect().top, map_element.get_rect().left), "dim": map_element.get_rect().size})
+            node_type = map_element.__class__.__name__
+            if node_type not in dic:
+                dic[node_type] = []
+            dic[node_type].append({'pos': (map_element.get_rect().top, map_element.get_rect().left), "dim": map_element.get_rect().size})
         if self.__map_image_name is not None:
             with open(self.__map_image_name + ".map", "w+") as outfile:
                 pprint.pprint(dic, outfile)
