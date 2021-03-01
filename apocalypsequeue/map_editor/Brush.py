@@ -46,3 +46,6 @@ class NavGraphNodeBrush(Brush):
 
     def get_map_element(self):
         return map_editor.MapElements.NavGraphNode(self._rect)
+
+    def resize_map_element(self, height, width):
+        pass
