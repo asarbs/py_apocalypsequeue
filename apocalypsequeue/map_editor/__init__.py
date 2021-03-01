@@ -4,6 +4,7 @@ from map_editor.MapElementToolbar import MapElementToolbar
 from map_editor.Brush import BrushType
 from map_editor.Brush import ShelfBrush
 from map_editor.Brush import NavGraphNodeBrush
+from map_editor.Brush import EntranceBrush
 from system import Vector
 import map_editor.Colors as Colors
 import logging
@@ -23,7 +24,8 @@ class MapEditor(object):
     FPS = 60
     BRUSH_DIC = {
         BrushType.SHELF: ShelfBrush(),
-        BrushType.NAV_GRAPH_NODE: NavGraphNodeBrush()
+        BrushType.NAV_GRAPH_NODE: NavGraphNodeBrush(),
+        BrushType.ENTRANCE: EntranceBrush()
     }
 
     def __init__(self):

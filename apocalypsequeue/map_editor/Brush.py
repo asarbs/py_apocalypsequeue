@@ -8,6 +8,7 @@ import map_editor.MapElements
 class BrushType(Enum):
     SHELF = 1
     NAV_GRAPH_NODE = 2
+    ENTRANCE = 3
 
 
 class Brush:
@@ -52,3 +53,11 @@ class NavGraphNodeBrush(Brush):
 
     def resize_map_element(self, height, width):
         pass
+
+
+class EntranceBrush(Brush):
+    def __init__(self):
+        super(EntranceBrush, self).__init__()
+
+    def get_map_element(self):
+        return map_editor.MapElements.Entrance(self._rect)

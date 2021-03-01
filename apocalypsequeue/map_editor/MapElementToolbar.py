@@ -22,6 +22,11 @@ class NavGraphNodeButton(BrushButton):
         super(NavGraphNodeButton, self).__init__(pos, "Node", manager, parent_element, container, BrushType.NAV_GRAPH_NODE)
 
 
+class EntranceButton(BrushButton):
+    def __init__(self, pos, manager, parent_element, container):
+        super(EntranceButton, self).__init__(pos, "Entrance", manager, parent_element, container, BrushType.ENTRANCE)
+
+
 class MapElementToolbar(UIWindow):
     def __init__(self, position, ui_manager, editor):
         super(MapElementToolbar, self).__init__(pygame.Rect(position, (210, 250)), ui_manager,
@@ -31,6 +36,7 @@ class MapElementToolbar(UIWindow):
         self.__buttons = []
         self.__buttons.append(ShelfButton((5, 5), ui_manager, self, self))
         self.__buttons.append(NavGraphNodeButton((5, 35), ui_manager, self, self))
+        self.__buttons.append(EntranceButton((5, 65), ui_manager, self, self))
 
     def process_event(self, event: pygame.event.Event) -> bool:
         if event.type == pygame.USEREVENT:

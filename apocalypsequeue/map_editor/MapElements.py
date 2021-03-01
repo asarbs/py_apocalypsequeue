@@ -18,19 +18,16 @@ class MapElement:
     def get_rect(self):
         return self.__rect
 
-    def draw(self, screen):
-        pass
-
-
-class Shelf(MapElement):
-    def __init__(self, rect):
-        super(Shelf, self).__init__(rect, Colors.SHELVES)
-
     def draw(self, screen, camera_pos):
         if self.get_rect() is not None:
             rect = self.get_rect()
             rect = rect.move(camera_pos)
             pygame.draw.rect(surface=screen, color=self.get_color(), rect=rect)
+
+
+class Shelf(MapElement):
+    def __init__(self, rect):
+        super(Shelf, self).__init__(rect, Colors.SHELVES)
 
 
 class NavGraphNode(MapElement):
@@ -44,3 +41,8 @@ class NavGraphNode(MapElement):
             center = rect.center
             radius = 5
             pygame.draw.circle(screen, color=self.get_color(), center=center, radius=radius)
+
+
+class Entrance(MapElement):
+    def __init__(self, rect):
+        super(Entrance, self).__init__(rect, Colors.ENTRANCE)
