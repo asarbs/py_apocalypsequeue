@@ -40,18 +40,19 @@ class FileBrowser(UIWindow):
                     logging.debug(filepath)
 
     def __with_input_window(self, ui_manager):
-        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 10), (200, 30)), manager=ui_manager, parent_element=self, container=self)
-        tmp.set_text("width in meters")
+        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 10), (200, 30)), manager=ui_manager, parent_element=self, container=self, object_id="with_input_window")
+        tmp.set_text("19")
         return tmp
 
     def __height_input_window(self, ui_manager):
-        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 35), (200, 30)), manager=ui_manager, parent_element=self, container=self)
-        tmp.set_text("height in meters")
+        tmp = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((10, 35), (200, 30)), manager=ui_manager, parent_element=self, container=self, object_id="height_input_window")
+        tmp.set_text("13")
         return tmp
 
     def process_event(self, event: pygame.event.Event) -> bool:
         handler = super().process_event(event)
         if event.type == pygame.USEREVENT:
+
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 for button in self.button_list:
                     if event.ui_element == button:

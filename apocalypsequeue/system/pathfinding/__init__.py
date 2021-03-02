@@ -42,6 +42,15 @@ class NavGraphNode(pygame.sprite.Sprite):
         weight = round((self.__position - neighbor.__position).getLength())
         self.edge_list.append(NavGraphNode.Edge(neighbor, weight))
 
+    def remove_neighbor(self, neighbor):
+        edge_to_delete = []
+        for n in self.edge_list:
+            if n.neighbor is neighbor:
+                edge_to_delete.append(n)
+
+        for e in edge_to_delete:
+            self.edge_list.remove(e)
+
     def get_neighbors(self):
         return self.edge_list
 

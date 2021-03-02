@@ -8,6 +8,7 @@ from map_editor.Brush import EntranceBrush
 from map_editor.Brush import CashRegisterBrush
 from system.pathfinding import build_nav_graph
 from system import Vector
+from system.pathfinding import NavGraphNode
 import system.Colors as Colors
 import logging
 import pprint
@@ -20,6 +21,9 @@ logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 #https://github.com/MyreMylar/pygame_gui_examples/blob/master/windowed_mini_games_app.py#L28
 
 pygame.init()
+
+
+
 
 
 class MapEditor(object):
@@ -127,9 +131,26 @@ class MapEditor(object):
         self.__brush.resize_map_element(height, width)
 
     def __stop_creation_of_map_element(self):
-        self.created_map_elements.append(self.__brush.get_map_element())
+        new_map_element = self.__brush.get_map_element()
+        self.created_map_elements.append(new_map_element)
+        self.__remove_covered_nav_graph_nodes(new_map_element)
         self.edit_mode = False
         self.tmp_map_elements_start_pos = None
+
+    def __remove_covered_nav_graph_nodes(self, new_map_element):
+        nav_graph_node_to_delete = []
+        for map_element in self.created_map_elements:
+            if type(map_element) is NavGraphNode:
+                if map_element.rect.colliderect(new_map_element.get_rect()):
+                    nav_graph_node_to_delete.append(map_element)
+        self.__delete_covered_nav_graph_nodes(nav_graph_node_to_delete)
+
+    def __delete_covered_nav_graph_nodes(self, nav_graph_node_to_delete):
+        for node in nav_graph_node_to_delete:
+            for map_element in self.created_map_elements:
+                if type(map_element) is NavGraphNode:
+                    map_element.remove_neighbor(node)
+            self.created_map_elements.remove(node)
 
     def __start_creation_of_map_element(self):
         if self.__brush is not None:
