@@ -32,6 +32,7 @@ class FileBrowser(UIWindow):
             for file in files:
                 filepath = subdir + os.sep + file
                 if filepath.endswith(".jpg"):
+                    filepath = filepath.split(".")[0]
                     self.file_list.append(filepath)
                     button = FileButton(y_pos=x, text=file, manager=ui_manager, parent_element=self, container=self,
                                         file_path=filepath) #Buttons creation part should be moved to separate method.

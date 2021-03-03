@@ -3,7 +3,7 @@ import math
 
 class Vector(object):
     def __init__(self, x:int, y:int):
-        self.__x = x;
+        self.__x = x
         self.__y = y
 
     def __str__(self):

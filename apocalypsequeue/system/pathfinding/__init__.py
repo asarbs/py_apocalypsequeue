@@ -72,6 +72,9 @@ class NavGraphNode(pygame.sprite.Sprite):
     def get_id(self):
         return self.__id
 
+    def set_id(self, id_to_set):
+        self.__id = id_to_set
+
     def get_pos(self):
         return self.__position
 
@@ -81,8 +84,8 @@ class NavGraphNode(pygame.sprite.Sprite):
     def serialization(self):
         edge_list_serialization = []
         for edge in self.edge_list:
-            edge_list_serialization.append(edge.neighbor.get_id())
-        return {"id": self.get_id(), "pos": (self.rect.top, self.rect.left), "dim": self.rect.size, "neighbor": edge_list_serialization}
+            edge_list_serialization.append({'neighbor_id':edge.neighbor.get_id(), 'weight': edge.weight})
+        return {"id": self.get_id(), "pos": {'top': self.rect.top, 'left': self.rect.left}, "dim": self.rect.size, "neighbor": edge_list_serialization}
 
 
 def build_nav_graph(screen_size, shelves, nav_point_density):

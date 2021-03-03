@@ -1,29 +1,29 @@
+from map_editor.Brush import BrushType
+from map_editor.Brush import CashRegisterBrush
+from map_editor.Brush import EntranceBrush
+from map_editor.Brush import NavGraphNodeBrush
+from map_editor.Brush import ShelfBrush
 from map_editor.editor_console_args import EDITOR_CONSOLE_ARGS
 from map_editor.FileBrowser import FileBrowser
 from map_editor.MapElementToolbar import MapElementToolbar
-from map_editor.Brush import BrushType
-from map_editor.Brush import ShelfBrush
-from map_editor.Brush import NavGraphNodeBrush
-from map_editor.Brush import EntranceBrush
-from map_editor.Brush import CashRegisterBrush
-from system.pathfinding import build_nav_graph
+from map_editor.serialization import MapDeserializer
+from map_editor.serialization import MapSerializer
 from system import Vector
+from system.pathfinding import build_nav_graph
 from system.pathfinding import NavGraphNode
-import system.Colors as Colors
+import json
 import logging
+import os
 import pprint
 import pygame
 import pygame_gui
-import json
+import system.Colors as Colors
 
 logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
 
 #https://github.com/MyreMylar/pygame_gui_examples/blob/master/windowed_mini_games_app.py#L28
 
 pygame.init()
-
-
-
 
 
 class MapEditor(object):
@@ -77,16 +77,6 @@ class MapEditor(object):
         self.screen.fill(Colors.BACKGROUND_COLOR)
         if self.__map_image is not None:
             self.screen.blit(self.__map_image, self.__camera_pos)
-
-    def load_map_and_update_screen(self, map_file_path, nav_point_density):
-        self.__map_image_name = map_file_path.split(".")[0]
-        self.__map_image = pygame.image.load(map_file_path)
-        self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
-        self.file_browser.hide()
-        nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [], nav_point_density)
-        for nodes in nav_graph_array:
-            for node in nodes:
-                self.created_map_elements.append(node)
 
     def __draw(self):
         for map_element in self.created_map_elements:
@@ -182,15 +172,21 @@ class MapEditor(object):
             self.__camera_pos[1] += camera_move.getList()[1]
 
     def __save(self):
-        dic = {}
-        for map_element in self.created_map_elements:
-            node_type = map_element.__class__.__name__
-            if node_type not in dic:
-                dic[node_type] = []
-            dic[node_type].append(map_element.serialization())
-        if self.__map_image_name is not None:
-            with open(self.__map_image_name + ".map.json", "w+") as outfile:
-                pprint.pprint(json.dumps(dic, indent=2, sort_keys=True), outfile)
+        MapSerializer.save(self.created_map_elements, self.__map_image_name)
+
+    def load_map_and_update_screen(self, map_file_path, nav_point_density):
+        self.__map_image_name = map_file_path.split(".")[0]
+        self.__map_image = pygame.image.load(map_file_path + ".jpg")
+        self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
+        self.file_browser.hide()
+
+        if os.path.exists(map_file_path + ".map"):
+            self.created_map_elements = MapDeserializer.load_map_file(map_file_path)
+        else:
+            nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [], nav_point_density)
+            for nodes in nav_graph_array:
+                for node in nodes:
+                    self.created_map_elements.append(node)
 
     def select_brash(self, brush_type: BrushType):
         self.__brush = MapEditor.BRUSH_DIC[brush_type]
