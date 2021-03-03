@@ -18,7 +18,6 @@ class FileBrowser(UIWindow):
         rec.centerx = position[0]
         rec.centery = position[1]
         super(FileBrowser, self).__init__(rec, ui_manager, window_display_title="map selector", object_id="#map_selector")
-        self.is_active = False
         self.file_list = []
         self.button_list = []
         self.__input = (self.__with_input_window(ui_manager), self.__height_input_window(ui_manager))

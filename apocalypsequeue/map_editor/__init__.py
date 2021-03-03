@@ -89,8 +89,10 @@ class MapEditor(object):
         for event in pygame.event.get():
             self.gui_manager.process_events(event)
 
-            if self.file_browser.check_clicked_inside_or_blocking(event) or self.toolbar.check_clicked_inside_or_blocking(event):
-                logging.debug("gui_manager.process_events")
+            if self.file_browser.is_enabled and self.file_browser.check_clicked_inside_or_blocking(event):
+                logging.debug("gui_manager.process_events.file_browser")
+            elif self.toolbar.check_clicked_inside_or_blocking(event):
+                logging.debug("gui_manager.process_events.toolbar")
             elif self.__map_image is not None:
                 logging.debug("main window process_events")
                 if event.type == pygame.QUIT:
@@ -178,6 +180,7 @@ class MapEditor(object):
         self.__map_image_name = map_file_path.split(".")[0]
         self.__map_image = pygame.image.load(map_file_path + ".jpg")
         self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
+        self.file_browser.disable()
         self.file_browser.hide()
 
         if os.path.exists(map_file_path + ".map"):
