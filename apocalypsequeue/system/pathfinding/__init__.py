@@ -7,7 +7,7 @@ from system.Colors import NAV_GRAPH_NODE
 from system.Colors import CASH_REGISTER
 from system.Colors import SHELVES
 from system.Colors import ENTRANCE
-from map_editor.MapElements import MapElementType
+from system.MapElementType import MapElementType
 from console_args import CONSOLE_ARGS
 
 GREEN = (0, 255, 0)

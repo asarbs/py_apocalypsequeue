@@ -1,7 +1,7 @@
 from map_editor.MapElements import CashRegister
 from map_editor.MapElements import Entrance
 from map_editor.MapElements import Shelf
-from map_editor.MapElements import Int2MapElementType
+from system.MapElementType import Int2MapElementType
 from system.pathfinding import NavGraphNode
 from system.Vector import Vector
 import json
