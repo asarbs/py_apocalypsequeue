@@ -3,6 +3,7 @@ from console_args import CONSOLE_ARGS
 from map_editor.serialization import MapDeserializer
 from system.MapElements.MapElementType import Int2MapElementType
 from system.MapElements.MapElementType import MapElementType
+from system.pathfinding import dijkstras_algorithm
 from system.pathfinding import NavGraphNode
 from system.ui.SimulationFileBrowser import SimulationFileBrowser
 from system.Vector import Vector
@@ -10,15 +11,14 @@ import logging
 import os
 import pygame
 import pygame_gui
-import system.Colors
 import random
+import system.Colors
 
 pygame.init()
 
 
 class MainSimulation:
     WINDOWS_SIZE = (1524, 1000)
-    FPS = 60
 
     def __init__(self):
         self.is_running = True
@@ -43,6 +43,7 @@ class MainSimulation:
                 MapElementType.CASH_REGISTER: [],
                 MapElementType.NAV_GRAPH_NODE: []
             }
+        self.__nav_graph_node_dic = {}
         self.__right_mouse_pos = None
 
     def main_loop(self):
@@ -50,10 +51,11 @@ class MainSimulation:
         while self.is_running:
             self.__draw_background()
             self.__add_agent()
+            self.__move_agents()
             self.__event_handler()
             self.__draw()
 
-            time_delta = self.clock.tick(MainSimulation.FPS) / 1000.0
+            time_delta = self.clock.tick(CONSOLE_ARGS.fps) / 1000.0
             self.gui_manager.update(time_delta)
             self.gui_manager.draw_ui(self.screen)
 
@@ -111,22 +113,34 @@ class MainSimulation:
     def __draw(self):
         for map_element in self.created_map_elements:
             map_element.draw(self.screen, self.__camera_pos)
+        for agent in self.__agents:
+            agent.draw(self.screen)
 
     def __add_agent(self):
         if self.__map_image is not None and len(self.__agents) < CONSOLE_ARGS.number_of_clients:
             start_node = random.choice(self.type_nav_grpah_nodes[MapElementType.ENTRANCE])
             target_cash_register = random.choice(self.type_nav_grpah_nodes[MapElementType.CASH_REGISTER])
-            middle_steps = random.sample(self.type_nav_grpah_nodes[MapElementType.SHELF], 15)
+            middle_steps = random.sample(self.type_nav_grpah_nodes[MapElementType.SHELF], 5)
             infected = random.random() < CONSOLE_ARGS.init_infec
             canInfect = infected
-            path = self.__build_agnet_path(start_node, target_cash_register, middle_steps)
+            nodes_to_visit = [start_node] + middle_steps + [target_cash_register]
+            path = self.__build_agent_path(nodes_to_visit)
             client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect,
                             target_cash_register=target_cash_register)
             self.__agents.append(client)
             print(client)
 
-    def __build_agnet_path(self, start_node, target_cash_register, middle_steps):
-        return [start_node, target_cash_register] + middle_steps
+    def __build_agent_path(self, nodes_to_visit):
+        path = []
+        for i in range(0, len(nodes_to_visit) - 1 , 1):
+            start_node = nodes_to_visit[i]
+            end_node = nodes_to_visit[i+1]
+            path += dijkstras_algorithm(self.__nav_graph_node_dic, start_node, end_node)
+        return path
+
+    def __move_agents(self):
+        for agent in self.__agents:
+            agent.move()
 
     def load_map_and_update_screen(self, map_file_path):
         self.__map_image = pygame.image.load(map_file_path + ".jpg")
@@ -140,3 +154,4 @@ class MainSimulation:
         for map_element in self.created_map_elements:
             if type(map_element) is NavGraphNode:
                 self.type_nav_grpah_nodes[Int2MapElementType[map_element.get_type()]].append(map_element)
+                self.__nav_graph_node_dic[map_element.get_id()] = map_element
