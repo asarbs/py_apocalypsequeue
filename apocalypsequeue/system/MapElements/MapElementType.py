@@ -1,5 +1,6 @@
 from enum import IntEnum
 
+
 class MapElementType(IntEnum):
     SHELF = 1
     ENTRANCE = 2

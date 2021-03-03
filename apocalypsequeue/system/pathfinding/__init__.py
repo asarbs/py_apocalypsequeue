@@ -7,8 +7,7 @@ from system.Colors import NAV_GRAPH_NODE
 from system.Colors import CASH_REGISTER
 from system.Colors import SHELVES
 from system.Colors import ENTRANCE
-from system.MapElementType import MapElementType
-from console_args import CONSOLE_ARGS
+from system.MapElements.MapElementType import MapElementType
 
 GREEN = (0, 255, 0)
 PINK = (199, 21, 133)
@@ -91,13 +90,23 @@ class NavGraphNode(pygame.sprite.Sprite):
         return Vector(self.rect.centerx, self.rect.centery)
 
     def set_type(self, map_element_type):
-        self.__type = map_element_type
-        if map_element_type == MapElementType.CASH_REGISTER:
+        if self.__type is MapElementType.NAV_GRAPH_NODE:
+            self.__type = map_element_type
+            self.__set_node_color()
+        if self.__type is MapElementType.SHELF and map_element_type in (MapElementType.ENTRANCE, MapElementType.CASH_REGISTER):
+            self.__type = map_element_type
+            self.__set_node_color()
+
+    def __set_node_color(self):
+        if self.__type == MapElementType.CASH_REGISTER:
             self.__color = CASH_REGISTER
-        elif map_element_type == MapElementType.ENTRANCE:
+        elif self.__type == MapElementType.ENTRANCE:
             self.__color = ENTRANCE
-        elif map_element_type == MapElementType.SHELF:
+        elif self.__type == MapElementType.SHELF:
             self.__color = SHELVES
+
+    def get_type(self):
+        return self.__type
 
     def serialization(self):
         edge_list_serialization = []

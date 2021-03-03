@@ -1,5 +1,5 @@
 from system.Vector import Vector
-from system import Meter
+from system.Meter import Meter
 from system.res import resource_path
 import pygame
 import random

@@ -1,4 +1,3 @@
-
 import argparse
 import logging
 
@@ -20,7 +19,8 @@ def _parse_arguments():
 
     return parser.parse_args()
 
-CONSOLE_ARGS =  _parse_arguments()
+CONSOLE_ARGS  =  _parse_arguments()
+
 
 # optional: delete function after use to prevent calling from other place
 del _parse_arguments

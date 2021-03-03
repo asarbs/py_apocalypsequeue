@@ -1,4 +1,4 @@
-from system.MapElementType import MapElementType
+from system.MapElements.MapElementType import MapElementType
 import pygame
 import system.Colors as Colors
 

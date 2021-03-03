@@ -1,8 +1,8 @@
 from map_editor import MapEditor
-from map_editor.editor_console_args import EDITOR_CONSOLE_ARGS
+from console_args import CONSOLE_ARGS
 import logging
 
-logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
+logging.basicConfig(level=CONSOLE_ARGS.loglevel)
 
 
 def main():

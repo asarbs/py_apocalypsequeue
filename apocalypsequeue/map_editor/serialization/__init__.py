@@ -1,12 +1,11 @@
-from map_editor.MapElements import CashRegister
-from map_editor.MapElements import Entrance
-from map_editor.MapElements import Shelf
-from system.MapElementType import Int2MapElementType
+from system.MapElements.MapElements import CashRegister
+from system.MapElements.MapElements import Entrance
+from system.MapElements.MapElements import Shelf
+from system.MapElements.MapElementType import Int2MapElementType
 from system.pathfinding import NavGraphNode
 from system.Vector import Vector
 import json
 import pygame
-
 
 
 class MapSerializer:

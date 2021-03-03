@@ -3,8 +3,8 @@
 block_cipher = None
 
 added_files = [
-    ('maps/plan00.jpg', 'maps'),
-    ('icons/*.png', 'icons'),
+    ('maps/*.jpg', 'maps'),
+    ('maps/*.map', 'maps'),
     ('map_editor/map_editor_theme.json', '.'),
     ('C:/Users/asarb/PycharmProjects/py_apocalypsequeue/venv/Lib/site-packages/pygame_gui/data/*.json', 'pygame_gui/data'),
     ('C:/Users/asarb/PycharmProjects/py_apocalypsequeue/venv/Lib/site-packages/pygame_gui/data/*.ttf', 'pygame_gui/data')

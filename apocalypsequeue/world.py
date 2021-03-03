@@ -16,9 +16,9 @@ def build_sim_world(nav_graph_array, nav_graph_dic, width, height):
     return cash_register_list, clients_lists
 
 
-def __build_client_list(nav_graph_array, nav_graph_dic, cash_register_list, width, height):
+def __build_client_list(start_nodes, nav_graph_dic, finish_nodes):
     clients_lists = pygame.sprite.Group()
-    nav_graph_size = len(nav_graph_array)
+    nav_graph_size = len(start_nodes)
     nav_graph_last_row = nav_graph_size - 1
 
     for i in range(0, CONSOLE_ARGS.number_of_clients):
@@ -26,8 +26,8 @@ def __build_client_list(nav_graph_array, nav_graph_dic, cash_register_list, widt
         y = random.randrange(0, 5, 1)
         infected = random.random() < CONSOLE_ARGS.init_infec
         canInfect = infected
-        start_node = nav_graph_array[x][y]
-        target_cash_register = random.choice(cash_register_list)
+        start_node = start_nodes[x][y]
+        target_cash_register = random.choice(finish_nodes)
         t1 = datetime.datetime.now()
         path = dijkstras_algorithm(nav_graph_dic, start_node, target_cash_register)
         t2 = datetime.datetime.now()

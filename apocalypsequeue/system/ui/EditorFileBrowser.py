@@ -12,12 +12,12 @@ class FileButton(pygame_gui.elements.UIButton):
         self.file_path = file_path
 
 
-class FileBrowser(UIWindow):
+class EditorFileBrowser(UIWindow):
     def __init__(self, position, ui_manager, editor):
         rec = pygame.Rect(position, (320, 240))
         rec.centerx = position[0]
         rec.centery = position[1]
-        super(FileBrowser, self).__init__(rec, ui_manager, window_display_title="map selector", object_id="#map_selector")
+        super(EditorFileBrowser, self).__init__(rec, ui_manager, window_display_title="map selector", object_id="#map_selector")
         self.file_list = []
         self.button_list = []
         self.__input = (self.__with_input_window(ui_manager), self.__height_input_window(ui_manager))

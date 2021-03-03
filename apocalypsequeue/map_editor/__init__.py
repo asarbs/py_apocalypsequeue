@@ -1,25 +1,23 @@
+from console_args import CONSOLE_ARGS
 from map_editor.Brush import BrushType
 from map_editor.Brush import CashRegisterBrush
 from map_editor.Brush import EntranceBrush
 from map_editor.Brush import NavGraphNodeBrush
 from map_editor.Brush import ShelfBrush
-from map_editor.editor_console_args import EDITOR_CONSOLE_ARGS
-from map_editor.FileBrowser import FileBrowser
 from map_editor.MapElementToolbar import MapElementToolbar
 from map_editor.serialization import MapDeserializer
 from map_editor.serialization import MapSerializer
 from system import Vector
 from system.pathfinding import build_nav_graph
 from system.pathfinding import NavGraphNode
-import json
+from system.ui.EditorFileBrowser import EditorFileBrowser
 import logging
 import os
-import pprint
 import pygame
 import pygame_gui
 import system.Colors as Colors
 
-logging.basicConfig(level=EDITOR_CONSOLE_ARGS.loglevel)
+logging.basicConfig(level=CONSOLE_ARGS.loglevel)
 
 #https://github.com/MyreMylar/pygame_gui_examples/blob/master/windowed_mini_games_app.py#L28
 
@@ -44,7 +42,7 @@ class MapEditor(object):
 
         self.gui_manager = pygame_gui.UIManager(MapEditor.WINDOWS_SIZE, 'map_editor/map_editor_theme.json')
         file_browser_pos = (MapEditor.WINDOWS_SIZE[0]/2, MapEditor.WINDOWS_SIZE[1]/2)
-        self.file_browser = FileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, editor=self)
+        self.file_browser = EditorFileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, editor=self)
         self.toolbar = MapElementToolbar(position=(5, 5), ui_manager=self.gui_manager, editor=self)
 
         self.__brush = None
@@ -163,7 +161,7 @@ class MapEditor(object):
         self.__right_mouse_pos = None
 
     def __move_camera(self):
-        #logging.debug('__move_camera')
+        logging.debug('__move_camera')
         if self.__right_mouse_pos is not None:
             pos = pygame.mouse.get_pos()
             current_mouse_pos = Vector(pos[0], pos[1])

@@ -1,7 +1,7 @@
 from enum import Enum
 import logging
 import pygame
-import map_editor.MapElements
+import system.MapElements.MapElements
 
 
 class BrushType(Enum):
@@ -40,7 +40,7 @@ class ShelfBrush(Brush):
         super(ShelfBrush, self).__init__()
 
     def get_map_element(self):
-        return map_editor.MapElements.Shelf(self._rect)
+        return system.MapElements.MapElements.Shelf(self._rect)
 
 
 class NavGraphNodeBrush(Brush):
@@ -48,7 +48,7 @@ class NavGraphNodeBrush(Brush):
         super(NavGraphNodeBrush, self).__init__()
 
     def get_map_element(self):
-        return map_editor.MapElements.NavGraphNode(self._rect)
+        return system.MapElements.MapElements.NavGraphNode(self._rect)
 
     def resize_map_element(self, height, width):
         pass
@@ -59,7 +59,7 @@ class EntranceBrush(Brush):
         super(EntranceBrush, self).__init__()
 
     def get_map_element(self):
-        return map_editor.MapElements.Entrance(self._rect)
+        return system.MapElements.MapElements.Entrance(self._rect)
 
 
 class CashRegisterBrush(Brush):
@@ -67,4 +67,4 @@ class CashRegisterBrush(Brush):
         super(CashRegisterBrush, self).__init__()
 
     def get_map_element(self):
-        return map_editor.MapElements.CashRegister(self._rect)
+        return system.MapElements.MapElements.CashRegister(self._rect)
