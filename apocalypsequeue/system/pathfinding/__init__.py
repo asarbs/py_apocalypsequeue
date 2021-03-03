@@ -4,6 +4,10 @@ import operator
 import logging
 from system.Vector import Vector
 from system.Colors import NAV_GRAPH_NODE
+from system.Colors import CASH_REGISTER
+from system.Colors import SHELVES
+from system.Colors import ENTRANCE
+from map_editor.MapElements import MapElementType
 from console_args import CONSOLE_ARGS
 
 GREEN = (0, 255, 0)
@@ -32,6 +36,8 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.__color = NAV_GRAPH_NODE
         NavGraphNode.count += 1
 
+        self.__type = MapElementType.NAV_GRAPH_NODE
+
     def __hash__(self):
         return hash(str(__class__) * self.__id)
 
@@ -42,12 +48,15 @@ class NavGraphNode(pygame.sprite.Sprite):
         weight = round((self.__position - neighbor.__position).getLength())
         self.edge_list.append(NavGraphNode.Edge(neighbor, weight))
 
-    def remove_neighbor(self, neighbor):
+    def remove_neighbor(self, neighbor, map_element_type):
         edge_to_delete = []
         for n in self.edge_list:
             if n.neighbor is neighbor:
+
                 edge_to_delete.append(n)
 
+        if len(edge_to_delete) > 0:
+            self.set_type(map_element_type)
         for e in edge_to_delete:
             self.edge_list.remove(e)
 
@@ -66,7 +75,7 @@ class NavGraphNode(pygame.sprite.Sprite):
             neighbor_rect = edge.neighbor.rect
             neighbor_rect = neighbor_rect.move(camera_pos)
             pygame.draw.line(screen, NAV_GRAPH_NODE, rect.center, neighbor_rect.center)
-        radius = 2
+        radius = 5
         pygame.draw.circle(screen, self.__color, rect.center, radius)
 
     def get_id(self):
@@ -81,11 +90,20 @@ class NavGraphNode(pygame.sprite.Sprite):
     def get_pos_vector(self):
         return Vector(self.rect.centerx, self.rect.centery)
 
+    def set_type(self, map_element_type):
+        self.__type = map_element_type
+        if map_element_type == MapElementType.CASH_REGISTER:
+            self.__color = CASH_REGISTER
+        elif map_element_type == MapElementType.ENTRANCE:
+            self.__color = ENTRANCE
+        elif map_element_type == MapElementType.SHELF:
+            self.__color = SHELVES
+
     def serialization(self):
         edge_list_serialization = []
         for edge in self.edge_list:
             edge_list_serialization.append({'neighbor_id':edge.neighbor.get_id(), 'weight': edge.weight})
-        return {"id": self.get_id(), "pos": {'top': self.rect.top, 'left': self.rect.left}, "dim": self.rect.size, "neighbor": edge_list_serialization}
+        return {"id": self.get_id(), "pos": {'top': self.rect.top, 'left': self.rect.left}, "dim": self.rect.size, "neighbor": edge_list_serialization, 'type': int(self.__type)}
 
 
 def build_nav_graph(screen_size, shelves, nav_point_density):

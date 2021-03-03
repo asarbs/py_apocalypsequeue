@@ -1,6 +1,7 @@
 from map_editor.MapElements import CashRegister
 from map_editor.MapElements import Entrance
 from map_editor.MapElements import Shelf
+from map_editor.MapElements import Int2MapElementType
 from system.pathfinding import NavGraphNode
 from system.Vector import Vector
 import json
@@ -38,6 +39,7 @@ class MapDeserializer:
                     for n in value:
                         node = NavGraphNode(Vector(n['pos']['left'], n['pos']['top']))
                         node.set_id(n['id'])
+                        node.set_type(Int2MapElementType[n['type']])
                         node_dic[node.get_id()] = node
                         created_map_elements.append(node)
                     for n1 in value:

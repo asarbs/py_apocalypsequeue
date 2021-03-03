@@ -135,13 +135,13 @@ class MapEditor(object):
             if type(map_element) is NavGraphNode:
                 if map_element.rect.colliderect(new_map_element.get_rect()):
                     nav_graph_node_to_delete.append(map_element)
-        self.__delete_covered_nav_graph_nodes(nav_graph_node_to_delete)
+        self.__delete_covered_nav_graph_nodes(nav_graph_node_to_delete, new_map_element.get_type())
 
-    def __delete_covered_nav_graph_nodes(self, nav_graph_node_to_delete):
+    def __delete_covered_nav_graph_nodes(self, nav_graph_node_to_delete, new_type):
         for node in nav_graph_node_to_delete:
             for map_element in self.created_map_elements:
                 if type(map_element) is NavGraphNode:
-                    map_element.remove_neighbor(node)
+                    map_element.remove_neighbor(node, new_type)
             self.created_map_elements.remove(node)
 
     def __start_creation_of_map_element(self):
