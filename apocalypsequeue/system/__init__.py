@@ -138,7 +138,7 @@ class MainSimulation:
         for map_element in self.created_map_elements:
             map_element.draw(self.screen, self.__camera_pos)
         for agent in self.__agents:
-            agent.draw(self.screen)
+            agent.draw(self.screen, self.__camera_pos)
 
     def __add_agent(self):
         if self.__map_image is not None and self.__agents_count < CONSOLE_ARGS.number_of_clients:

@@ -129,9 +129,9 @@ class Client(pygame.sprite.Sprite):
     def standingInQueue(self):
         return self.__isInQueue
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
+    def draw(self, screen, camera_pos):
+        rect = self.rect.move(camera_pos)
+        screen.blit(self.image, rect)
 
 
 class CashRegister(pygame.sprite.Sprite):
