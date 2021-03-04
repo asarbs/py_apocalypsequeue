@@ -37,7 +37,7 @@ class Client(pygame.sprite.Sprite):
 
         self.__set_image()
         self.rect = self.image.get_rect()
-        self.rect.move_ip(self.__position.getX(), self.__position.getY())
+        self.rect.center = (self.__position.getX(), self.__position.getY())
 
         Client.count += 1
 
