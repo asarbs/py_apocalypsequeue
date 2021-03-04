@@ -15,7 +15,7 @@ class Client(pygame.sprite.Sprite):
     count = 1
     people_img = pygame.image.load(resource_path("icons/person_big.png"))
     zombie_img = pygame.image.load(resource_path("icons/zombie_big.png"))
-    #step_size = Meter(0.4).get_pixels()
+    #step_size = Meter(0.7).get_pixels()
     #random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     size = (Meter(1.5).get_pixels(), Meter(1.5).get_pixels())
 

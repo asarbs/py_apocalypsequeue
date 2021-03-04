@@ -12,6 +12,7 @@ from system.pathfinding import build_nav_graph
 from system.pathfinding import NavGraphNode
 from system.ui.EditorFileBrowser import EditorFileBrowser
 import logging
+import math
 import os
 import pygame
 import pygame_gui
@@ -56,6 +57,7 @@ class MapEditor(object):
         self.__map_image_name = None
         self.__camera_pos = [0, 0]
         self.__right_mouse_pos = None
+        self.__meter_to_pixel_ratio = 0
 
     def main_loop(self):
         logging.debug("running={}".format(self.is_running))
@@ -172,14 +174,16 @@ class MapEditor(object):
             self.__camera_pos[1] += camera_move.getList()[1]
 
     def __save(self):
-        MapSerializer.save(self.created_map_elements, self.__map_image_name)
+        MapSerializer.save(self.created_map_elements, self.__map_image_name, self.__meter_to_pixel_ratio)
 
-    def load_map_and_update_screen(self, map_file_path, nav_point_density):
+    def load_map_and_update_screen(self, map_file_path, nav_point_density, width_in_meters):
         self.__map_image_name = map_file_path.split(".")[0]
         self.__map_image = pygame.image.load(map_file_path + ".jpg")
         self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
         self.file_browser.disable()
         self.file_browser.hide()
+
+        self.__meter_to_pixel_ratio = math.ceil( self.__map_image.get_width() / width_in_meters )
 
         if os.path.exists(map_file_path + ".map"):
             self.created_map_elements = MapDeserializer.load_map_file(map_file_path)
