@@ -25,14 +25,13 @@ class Data:
                 if fname.startswith('simulation_'):
                     os.remove(os.path.join(".", fname))
 
-
     def addTimeData(self, time_step):
         if time_step not in self.outdata:
-            self.outdata[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0, "number_of_infection": 0}
+            self.outdata[time_step] = {"time_step": 0, "number_of_infected": 0, "number_of_new_infected": 0, "number_of_infection": 0, 'number_of_clients':0}
 
     def addStats(self, clients_lists, time_step):
         self.outdata[time_step]["time_step"] += 1
-        self.outdata[time_step]['number_of_clients'] = len(clients_lists)
+        self.outdata[time_step]['number_of_clients'] += len(clients_lists)
         for c in clients_lists:
             if c.isInfected():
                 self.outdata[time_step]["number_of_infected"] += 1
@@ -64,7 +63,8 @@ class Data:
         csvfile.write(
             "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue; number_of_infections\n")
         for time_step in self.outdata:
-            line = '{}|{}|{:.2f}|{:.2f}|{:.2f}\n'.format(time_step,
+            if self.outdata[time_step]["time_step"] > 0:
+                line = '{}|{}|{:.2f}|{:.2f}|{:.2f}\n'.format(time_step,
                                                                 (self.outdata[time_step]["number_of_clients"]           / self.outdata[time_step]["time_step"]),
                                                                 (self.outdata[time_step]["number_of_infected"]          / self.outdata[time_step]["time_step"]),
                                                                 (self.outdata[time_step]["number_of_new_infected"]      / self.outdata[time_step]["time_step"]),
@@ -82,15 +82,20 @@ class Data:
             'number_of_infection': []
         }
         for time_step in self.outdata:
-            df_dic['number_of_clients'].append         (self.outdata[time_step]['number_of_clients'] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_infected'].append        (self.outdata[time_step]["number_of_infected"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_new_infected'].append    (self.outdata[time_step]["number_of_new_infected"] / self.outdata[time_step]["time_step"])
-            df_dic['number_of_infection'].append       (self.outdata[time_step]["number_of_infection"] / self.outdata[time_step]["time_step"])
-
+            if self.outdata[time_step]["time_step"] > 0:
+                df_dic['number_of_clients'].append         (self.outdata[time_step]['number_of_clients'] / self.outdata[time_step]["time_step"])
+                df_dic['number_of_infected'].append        (self.outdata[time_step]["number_of_infected"] / self.outdata[time_step]["time_step"])
+                df_dic['number_of_new_infected'].append    (self.outdata[time_step]["number_of_new_infected"] / self.outdata[time_step]["time_step"])
+                df_dic['number_of_infection'].append       (self.outdata[time_step]["number_of_infection"] / self.outdata[time_step]["time_step"])
+            else:
+                df_dic['number_of_clients'].append         (0)
+                df_dic['number_of_infected'].append        (0)
+                df_dic['number_of_new_infected'].append    (0)
+                df_dic['number_of_infection'].append       (0)
 
         df = pd.DataFrame(df_dic)
         fig, axs = plt.subplots(3)
-        fig.suptitle("Simulation params: infection_distance {}[j] = {}m; infection_threshold={}".format(CONSOLE_ARGS.inf_distance, round((CONSOLE_ARGS.inf_distance/3.3),2), CONSOLE_ARGS.infection_threshold ))
+        fig.suptitle("Simulation params: infection_distance {}m; infection_threshold={}".format(CONSOLE_ARGS.inf_distance, CONSOLE_ARGS.infection_threshold ))
         fig.set_figheight(21)
         fig.set_figwidth(15)
 
