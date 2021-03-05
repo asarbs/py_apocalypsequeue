@@ -5,28 +5,28 @@ import pygame
 import random
 import logging
 from console_args import CONSOLE_ARGS
+import system.Colors
 
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
 
 
 class Client(pygame.sprite.Sprite):
     count = 1
     people_img = pygame.image.load(resource_path("icons/person_big.png"))
+    people_red_img = pygame.image.load(resource_path("icons/person_big_red.png"))
     zombie_img = pygame.image.load(resource_path("icons/zombie_big.png"))
-    #step_size = Meter(0.4).get_pixels()
+
+    #step_size = Meter(0.7).get_pixels()
     #random_direction = [-15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     size = (Meter(1.5).get_pixels(), Meter(1.5).get_pixels())
 
     def __init__(self, target_cash_register, start_node, path, infected=False, canInfect=False, idName="0"):
         pygame.sprite.Sprite.__init__(self)
+        self.font = pygame.font.SysFont('Arial', 12)
         self.__id = Client.count
         self.__position = start_node.get_pos()
         self.__target_cash_register_node = target_cash_register
         self.__infected = infected
         self.__canInfect = canInfect
-        self.__isInQueue = False
         self.__timeInInfectionArea = {}
         self.__path = path
         for p in path:
@@ -37,12 +37,16 @@ class Client(pygame.sprite.Sprite):
 
         self.__set_image()
         self.rect = self.image.get_rect()
-        self.rect.move_ip(self.__position.getX(), self.__position.getY())
+        self.rect.center = (self.__position.getX(), self.__position.getY())
 
         Client.count += 1
 
     def __set_image(self):
-        self.image = Client.zombie_img if self.__infected else Client.people_img
+        self.image = Client.people_img
+        if self.__infected:
+            self.image = Client.zombie_img
+        if self.__canInfect:
+            self.image = Client.people_red_img
         self.image = pygame.transform.scale(self.image, Client.size)
 
     def __str__(self):
@@ -55,11 +59,11 @@ class Client(pygame.sprite.Sprite):
         return hash(str(__class__) * self.__id)
 
     def move(self):
-        if self.__step_on_path < len(self.__path) - 1:
-            self.__step_on_path += 1
-            to_vec = self.__path[self.__step_on_path].get_pos_vector() - self.__position
+        if len(self.__path) > 0:
+            to_vec = self.__path.pop(0).get_pos_vector() - self.__position
             self.__move(to_vec)
             logging.debug("position = {}; rect=[{},{}]".format(str(self.__position), self.rect.x, self.rect.y))
+
 
     def __move(self, vec_to):
         vec_to.round()
@@ -68,7 +72,7 @@ class Client(pygame.sprite.Sprite):
         self.rect.move_ip(vec_to.getX(), vec_to.getY())
 
     def in_cash_register(self):
-        return self.__step_on_path == len(self.__path) - 1
+        return len(self.__path) == 0
 
     # def move_randomly(self):
     #     if self.__isInQueue:
@@ -100,6 +104,8 @@ class Client(pygame.sprite.Sprite):
         return self.__infected
 
     def canInfect(self):
+        if len(self.__path) == 0:
+            return False
         return self.__canInfect
 
     def try_infect(self, distance):
@@ -129,9 +135,11 @@ class Client(pygame.sprite.Sprite):
     def standingInQueue(self):
         return self.__isInQueue
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
-
+    def draw(self, screen, camera_pos):
+        if len(self.__path) > 0:
+            rect = self.rect.move(camera_pos)
+            screen.blit(self.image, rect)
+            screen.blit(self.font.render(str(self), "True", system.Colors.WHITE, system.Colors.BLACK), rect)
 
 
 class CashRegister(pygame.sprite.Sprite):
@@ -185,4 +193,4 @@ class ShopShelf(pygame.sprite.Sprite):
 
     def draw(self, screen):
         logging.debug('ShopShelf.draw:{}'.format(self.__id))
-        pygame.draw.rect(screen, GREEN, self.rect)
+        pygame.draw.rect(screen, system.Colors.GREEN, self.rect)

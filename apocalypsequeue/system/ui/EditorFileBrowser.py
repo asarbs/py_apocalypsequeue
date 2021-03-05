@@ -60,8 +60,9 @@ class EditorFileBrowser(UIWindow):
                         if self.__input[0].get_text() == '' or self.__input[1].get_text() == '':
                             return False
                         else:
-                            nav_point_density_x = math.ceil(float(self.__input[0].get_text()) / 0.7)
+                            width_in_meters = float(self.__input[0].get_text())
+                            nav_point_density_x = math.ceil(width_in_meters / 0.7)
                             nav_point_density_y = math.ceil(float(self.__input[1].get_text()) / 0.7)
-                        self.__editor.load_map_and_update_screen(event.ui_element.file_path, (nav_point_density_x, nav_point_density_y))
+                        self.__editor.load_map_and_update_screen(event.ui_element.file_path, (nav_point_density_x, nav_point_density_y), width_in_meters)
                         return True
         return False

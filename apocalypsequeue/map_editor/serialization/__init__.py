@@ -7,12 +7,14 @@ from system.Vector import Vector
 import json
 import pygame
 
+METER_TO_PIXEL_RATIO = 'meter_to_pixel_ratio'
+
 
 class MapSerializer:
 
     @staticmethod
-    def save(created_map_elements, map_image_name):
-        dic = {}
+    def save(created_map_elements, map_image_name, meter_to_pixel_ratio):
+        dic = {METER_TO_PIXEL_RATIO: meter_to_pixel_ratio}
         for map_element in created_map_elements:
             node_type = map_element.__class__.__name__
             if node_type not in dic:
@@ -27,6 +29,7 @@ class MapDeserializer:
     @staticmethod
     def load_map_file(map_image_name):
         created_map_elements = []
+        meter_to_pixel_ratio = 0
         with open(map_image_name + ".map") as map_file:
             data = json.load(map_file)
             for key, value in data.items():
@@ -50,4 +53,6 @@ class MapDeserializer:
                 elif key == "CashRegister":
                     for cr in value:
                         created_map_elements.append(CashRegister(pygame.Rect(cr['pos'], cr['dim'])))
-        return created_map_elements
+                elif key == METER_TO_PIXEL_RATIO:
+                    meter_to_pixel_ratio = value
+        return created_map_elements, meter_to_pixel_ratio

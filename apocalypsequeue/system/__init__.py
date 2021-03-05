@@ -7,11 +7,13 @@ from system.pathfinding import dijkstras_algorithm
 from system.pathfinding import NavGraphNode
 from system.ui.SimulationFileBrowser import SimulationFileBrowser
 from system.Vector import Vector
+from data import Data
 import logging
 import os
 import pygame
 import pygame_gui
 import random
+from numpy import random as nrandom
 import system.Colors
 
 pygame.init()
@@ -32,11 +34,12 @@ class MainSimulation:
         self.file_browser = SimulationFileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, simulation=self)
 
         self.__agents = []
+        self.__agents_count = 0
 
         self.__map_image = None
         self.__camera_pos = [0, 0]
         self.created_map_elements = []
-        self.type_nav_grpah_nodes = \
+        self.type_nav_graph_nodes = \
             {
                 MapElementType.SHELF: [],
                 MapElementType.ENTRANCE: [],
@@ -46,20 +49,59 @@ class MainSimulation:
         self.__nav_graph_node_dic = {}
         self.__right_mouse_pos = None
 
+        self.__data = Data()
+        self.__time_step = 0
+        self.__meter_to_pixel_ratio = 0
+        self.__run_simulation = False
+        self.__poisson_random = None
+        self.__next_agent_creation_time = None
+
     def main_loop(self):
         logging.debug("running={}".format(self.is_running))
-        while self.is_running:
-            self.__draw_background()
+        for num_of_repetition in range(0, CONSOLE_ARGS.num_of_repeat_max, 1):
+            self.restart_simulation()
+            while self.is_running:
+                self.__time_step += 1
+                self.__data.addTimeData(self.__time_step)
+
+                self.__draw_background()
+                self.execute_simulation()
+                self.__event_handler()
+
+                self.__draw()
+                self.__data.addStats(self.__agents, self.__time_step)
+
+                self.__check_end()
+                time_delta = self.clock.tick(CONSOLE_ARGS.fps) / 1000.0
+                self.gui_manager.update(time_delta)
+                self.gui_manager.draw_ui(self.screen)
+
+                pygame.display.update()
+
+        self.__data.dump(self.__map_image)
+
+    def restart_simulation(self):
+        self.is_running = True
+        self.__agents_count = 0
+        self.__time_step = 0
+        self.__poisson_random = nrandom.poisson(lam=CONSOLE_ARGS.clients_mean_distribution, size=CONSOLE_ARGS.number_of_clients + 1).tolist()
+        self.__next_agent_creation_time = self.__poisson_random.pop(0)
+        self.__agents.clear()
+
+    def execute_simulation(self):
+        if self.__run_simulation:
             self.__add_agent()
             self.__move_agents()
-            self.__event_handler()
-            self.__draw()
+            self.__check_infection()
 
-            time_delta = self.clock.tick(CONSOLE_ARGS.fps) / 1000.0
-            self.gui_manager.update(time_delta)
-            self.gui_manager.draw_ui(self.screen)
-
-            pygame.display.update()
+    def __check_end(self):
+        num_of_agents_in_cash_register = 0
+        for agent in self.__agents:
+             if agent.in_cash_register():
+                 num_of_agents_in_cash_register += 1
+        logging.debug('__check_end: num_of_agents_in_cash_register={}, __agents_count={}'.format(num_of_agents_in_cash_register, self.__agents_count))
+        if num_of_agents_in_cash_register == CONSOLE_ARGS.number_of_clients and self.__agents_count == CONSOLE_ARGS.number_of_clients:
+            self.is_running = False
 
     def __draw_background(self):
         self.screen.fill(Colors.BACKGROUND_COLOR)
@@ -114,21 +156,25 @@ class MainSimulation:
         for map_element in self.created_map_elements:
             map_element.draw(self.screen, self.__camera_pos)
         for agent in self.__agents:
-            agent.draw(self.screen)
+            agent.draw(self.screen, self.__camera_pos)
 
     def __add_agent(self):
-        if self.__map_image is not None and len(self.__agents) < CONSOLE_ARGS.number_of_clients:
-            start_node = random.choice(self.type_nav_grpah_nodes[MapElementType.ENTRANCE])
-            target_cash_register = random.choice(self.type_nav_grpah_nodes[MapElementType.CASH_REGISTER])
-            middle_steps = random.sample(self.type_nav_grpah_nodes[MapElementType.SHELF], 5)
-            infected = random.random() < CONSOLE_ARGS.init_infec
-            canInfect = infected
-            nodes_to_visit = [start_node] + middle_steps + [target_cash_register]
-            path = self.__build_agent_path(nodes_to_visit)
-            client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect,
-                            target_cash_register=target_cash_register)
-            self.__agents.append(client)
-            print(client)
+        if self.__map_image is not None and self.__agents_count < CONSOLE_ARGS.number_of_clients:
+            if self.__time_step >= self.__next_agent_creation_time:
+                self.__next_agent_creation_time = self.__time_step + self.__poisson_random.pop(0)
+                logging.debug('__next_agent_creation_time={}'.format(self.__next_agent_creation_time))
+                self.__agents_count += 1
+                start_node = random.choice(self.type_nav_graph_nodes[MapElementType.ENTRANCE])
+                target_cash_register = random.choice(self.type_nav_graph_nodes[MapElementType.CASH_REGISTER])
+                middle_steps = random.sample(self.type_nav_graph_nodes[MapElementType.SHELF], 5)
+                infected = random.random() < CONSOLE_ARGS.init_infec
+                canInfect = infected
+                nodes_to_visit = [start_node] + middle_steps + [target_cash_register]
+                path = self.__build_agent_path(nodes_to_visit)
+                client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect,
+                                target_cash_register=target_cash_register)
+                self.__agents.append(client)
+                logging.debug('new client={}'.format(client))
 
     def __build_agent_path(self, nodes_to_visit):
         path = []
@@ -142,6 +188,16 @@ class MainSimulation:
         for agent in self.__agents:
             agent.move()
 
+    def __check_infection(self):
+        for a1 in self.__agents:
+            for a2 in self.__agents:
+                if not a1 == a2 and not a1.isInfected():
+                    distance_in_meters = a1.getClientDistance(a2) / self.__meter_to_pixel_ratio
+                    if a2.canInfect() and distance_in_meters < CONSOLE_ARGS.inf_distance:
+                        self.__data.addContactTime(distance_in_meters)
+                        if a1.try_infect(distance_in_meters):
+                            self.__data.add_infection_params(a1.getPos(), self.__time_step)
+
     def load_map_and_update_screen(self, map_file_path):
         self.__map_image = pygame.image.load(map_file_path + ".jpg")
         self.screen = pygame.display.set_mode(self.__map_image.get_rect().size, pygame.RESIZABLE)
@@ -149,9 +205,11 @@ class MainSimulation:
         self.file_browser.hide()
 
         if os.path.exists(map_file_path + ".map"):
-            self.created_map_elements = MapDeserializer.load_map_file(map_file_path)
+            self.created_map_elements, self.__meter_to_pixel_ratio = MapDeserializer.load_map_file(map_file_path)
 
         for map_element in self.created_map_elements:
             if type(map_element) is NavGraphNode:
-                self.type_nav_grpah_nodes[Int2MapElementType[map_element.get_type()]].append(map_element)
+                self.type_nav_graph_nodes[Int2MapElementType[map_element.get_type()]].append(map_element)
                 self.__nav_graph_node_dic[map_element.get_id()] = map_element
+        self.__run_simulation = True
+        self.__time_step = 1
