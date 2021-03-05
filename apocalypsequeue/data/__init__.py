@@ -32,6 +32,7 @@ class Data:
 
     def addStats(self, clients_lists, time_step):
         self.outdata[time_step]["time_step"] += 1
+        self.outdata[time_step]['number_of_clients'] = len(clients_lists)
         for c in clients_lists:
             if c.isInfected():
                 self.outdata[time_step]["number_of_infected"] += 1
@@ -64,7 +65,7 @@ class Data:
             "time step; num_of_timesteps;number of infected; number of new infected;number of healthy; number of clients in queue; number_of_infections\n")
         for time_step in self.outdata:
             line = '{}|{}|{:.2f}|{:.2f}|{:.2f}\n'.format(time_step,
-                                                                self.outdata[time_step]["time_step"],
+                                                                (self.outdata[time_step]["number_of_clients"]           / self.outdata[time_step]["time_step"]),
                                                                 (self.outdata[time_step]["number_of_infected"]          / self.outdata[time_step]["time_step"]),
                                                                 (self.outdata[time_step]["number_of_new_infected"]      / self.outdata[time_step]["time_step"]),
                                                                 (self.outdata[time_step]["number_of_infection"]         / self.outdata[time_step]["time_step"])
@@ -75,11 +76,13 @@ class Data:
     def __save_time_data_plot(self):
         df_dic = {
             'time_step': self.outdata.keys(),
+            'number_of_clients': [],
             'number_of_infected': [],
             'number_of_new_infected': [],
             'number_of_infection': []
         }
         for time_step in self.outdata:
+            df_dic['number_of_clients'].append         (self.outdata[time_step]['number_of_clients'] / self.outdata[time_step]["time_step"])
             df_dic['number_of_infected'].append        (self.outdata[time_step]["number_of_infected"] / self.outdata[time_step]["time_step"])
             df_dic['number_of_new_infected'].append    (self.outdata[time_step]["number_of_new_infected"] / self.outdata[time_step]["time_step"])
             df_dic['number_of_infection'].append       (self.outdata[time_step]["number_of_infection"] / self.outdata[time_step]["time_step"])
@@ -91,6 +94,7 @@ class Data:
         fig.set_figheight(21)
         fig.set_figwidth(15)
 
+        number_of_clients, =  axs[0].plot('time_step', 'number_of_clients', data=df, marker='', color='#a10c06', linewidth=1)
         number_of_infected, = axs[0].plot('time_step', 'number_of_infected', data=df, marker='', color='#1f77b4', linewidth=1)
         number_of_new_infected, = axs[0].plot('time_step', 'number_of_new_infected', data=df, marker='', color='#ff7f0e', linewidth=1)
         axs[1].bar('time_step', 'number_of_infection', data=df, color='#6f1787')
@@ -101,8 +105,8 @@ class Data:
         axs[0].set_xlabel("Czas [krok symulacji]")
         axs[0].set_ylabel("Liczba klientów")
         axs[0].set_title("Statysyki klientów w czasie")
-        axs[0].legend([number_of_infected, number_of_new_infected],
-                   ['Liczba wszystkich zainfekowanych', 'Liczba zainfekowanych w trakcie symulacji'])
+        axs[0].legend([number_of_clients, number_of_infected, number_of_new_infected],
+                   ['Liczba wszystkich klientów', 'Liczba wszystkich zainfekowanych', 'Liczba zainfekowanych w trakcie symulacji'])
 
         axs[1].set_xlabel("Czas [krok symulacji]")
         axs[1].set_ylabel("Liczba infeksji")
