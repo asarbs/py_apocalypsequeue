@@ -186,7 +186,7 @@ class MapEditor(object):
         self.__meter_to_pixel_ratio = math.ceil( self.__map_image.get_width() / width_in_meters )
 
         if os.path.exists(map_file_path + ".map"):
-            self.created_map_elements = MapDeserializer.load_map_file(map_file_path)
+            self.created_map_elements, meter_to_pixel_ratio = MapDeserializer.load_map_file(map_file_path)
         else:
             nav_graph_array, nav_graph_dic, nav_graph_group = build_nav_graph(self.screen.get_rect().size, [], nav_point_density)
             for nodes in nav_graph_array:
