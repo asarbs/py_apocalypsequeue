@@ -58,6 +58,7 @@ class MainSimulation:
             self.is_running = True
             self.__agents_count = 0
             self.__time_step = 0
+            self.__agents.clear()
             while self.is_running:
                 self.__time_step += 1
                 self.__data.addTimeData(self.__time_step)
@@ -68,7 +69,7 @@ class MainSimulation:
                 self.__check_infection()
                 self.__event_handler()
                 self.__draw()
-                self.__del_agents()
+                self.__deactivate_agents_infection()
                 self.__check_end()
 
                 self.__data.addStats(self.__agents, self.__time_step)
@@ -81,8 +82,12 @@ class MainSimulation:
         self.__data.dump(self.__map_image)
 
     def __check_end(self):
-        logging.debug('__check_end: len(agents)={}, __agents_count={}'.format(len(self.__agents),self.__agents_count ))
-        if len(self.__agents) == 0 and self.__agents_count == CONSOLE_ARGS.number_of_clients:
+        num_of_agents_in_cash_register = 0
+        for agent in self.__agents:
+             if agent.in_cash_register():
+                 num_of_agents_in_cash_register += 1
+        logging.debug('__check_end: num_of_agents_in_cash_register={}, __agents_count={}'.format(num_of_agents_in_cash_register, self.__agents_count))
+        if num_of_agents_in_cash_register == CONSOLE_ARGS.number_of_clients and self.__agents_count == CONSOLE_ARGS.number_of_clients:
             self.is_running = False
 
     def __draw_background(self):
@@ -167,15 +172,10 @@ class MainSimulation:
         for agent in self.__agents:
             agent.move()
 
-    def __del_agents(self):
-        agents_to_remove = []
+    def __deactivate_agents_infection(self):
         for agent in self.__agents:
             if agent.in_cash_register():
-                agents_to_remove.append(agent)
-
-        for agent in agents_to_remove:
-            logging.debug('remove agent={}'.format(agent))
-            self.__agents.remove(agent)
+                agent.__canInfect = False
 
     def __check_infection(self):
         for a1 in self.__agents:
