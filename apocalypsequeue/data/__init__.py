@@ -45,13 +45,15 @@ class Data:
     def addContactTime(self, distance):
         self.contact_time[round(distance)] += 1
 
-    def dump(self, screen):
+    def dump(self, screen, map_elements):
         self.__save_time_data()
-        self.__save_pos_data(screen)
+        self.__save_pos_data(screen, map_elements)
         self.__save_time_data_plot()
 
-    def __save_pos_data(self, screen):
+    def __save_pos_data(self, screen, map_elements):
         posfile = open('{}_pos.csv'.format(Data.filename), "w+")
+        for map_element in map_elements:
+            map_element.draw(screen, (0, 0))
         for p in self.infectionPos:
             posfile.write('{},{}\n'.format(p[0], p[1]))
             pygame.draw.circle(screen, (255,0,0), p, radius=5)

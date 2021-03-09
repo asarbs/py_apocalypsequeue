@@ -70,11 +70,11 @@ class NavGraphNode(pygame.sprite.Sprite):
 
     def draw(self, screen, camera_pos=(0, 0)):
         rect = self.rect.move(camera_pos)
-        for edge in self.edge_list:
-            neighbor_rect = edge.neighbor.rect
-            neighbor_rect = neighbor_rect.move(camera_pos)
-            pygame.draw.line(screen, NAV_GRAPH_NODE, rect.center, neighbor_rect.center)
-        radius = 5
+        # for edge in self.edge_list:
+        #     neighbor_rect = edge.neighbor.rect
+        #     neighbor_rect = neighbor_rect.move(camera_pos)
+        #     pygame.draw.line(screen, NAV_GRAPH_NODE, rect.center, neighbor_rect.center)
+        radius = 2
         pygame.draw.circle(screen, self.__color, rect.center, radius)
 
     def get_id(self):
@@ -104,6 +104,9 @@ class NavGraphNode(pygame.sprite.Sprite):
             self.__color = ENTRANCE
         elif self.__type == MapElementType.SHELF:
             self.__color = SHELVES
+
+    def get_color(self):
+        return self.__color
 
     def get_type(self):
         return self.__type
@@ -195,6 +198,7 @@ def dijkstras_algorithm(nav_graph_dic, start_node, end_node):
         if u_node == end_node:
             break
         u_neighbors = u_node.get_neighbors()
+
         for u_neighbor in u_neighbors:
             alt = d[u_node.get_id()] + u_neighbor.weight
             if d[u_neighbor.neighbor.get_id()] > alt:

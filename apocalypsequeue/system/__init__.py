@@ -1,19 +1,20 @@
 from apocalypse import Client
 from console_args import CONSOLE_ARGS
+from data import Data
 from map_editor.serialization import MapDeserializer
+from numpy import random as nrandom
+from system.AgentBuilder import AgentBuilder
 from system.MapElements.MapElementType import Int2MapElementType
 from system.MapElements.MapElementType import MapElementType
 from system.pathfinding import dijkstras_algorithm
 from system.pathfinding import NavGraphNode
 from system.ui.SimulationFileBrowser import SimulationFileBrowser
 from system.Vector import Vector
-from data import Data
 import logging
 import os
 import pygame
 import pygame_gui
-import random
-from numpy import random as nrandom
+import time
 import system.Colors
 
 pygame.init()
@@ -32,6 +33,9 @@ class MainSimulation:
         self.gui_manager = pygame_gui.UIManager(MainSimulation.WINDOWS_SIZE, 'system/simulation_editor_theme.json')
         file_browser_pos = (MainSimulation.WINDOWS_SIZE[0]/2, MainSimulation.WINDOWS_SIZE[1]/2)
         self.file_browser = SimulationFileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, simulation=self)
+
+        self.__agent_builder = None
+        self.__agents_wait_list = []
 
         self.__agents = []
         self.__agents_count = 0
@@ -78,7 +82,7 @@ class MainSimulation:
 
                 pygame.display.update()
 
-        self.__data.dump(self.__map_image)
+        self.__data.dump(self.__map_image, self.created_map_elements)
 
     def restart_simulation(self):
         self.is_running = True
@@ -164,25 +168,20 @@ class MainSimulation:
                 self.__next_agent_creation_time = self.__time_step + self.__poisson_random.pop(0)
                 logging.debug('__next_agent_creation_time={}'.format(self.__next_agent_creation_time))
                 self.__agents_count += 1
-                start_node = random.choice(self.type_nav_graph_nodes[MapElementType.ENTRANCE])
-                target_cash_register = random.choice(self.type_nav_graph_nodes[MapElementType.CASH_REGISTER])
-                middle_steps = random.sample(self.type_nav_graph_nodes[MapElementType.SHELF], 5)
-                infected = random.random() < CONSOLE_ARGS.init_infec
-                canInfect = infected
-                nodes_to_visit = [start_node] + middle_steps + [target_cash_register]
-                path = self.__build_agent_path(nodes_to_visit)
-                client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect,
-                                target_cash_register=target_cash_register)
+                while len(self.__agents_wait_list) == 0:
+                    logging.debug("add_agent: wait for next agent")
+                    time.sleep(5)
+                client = self.__agents_wait_list.pop(0)
                 self.__agents.append(client)
-                logging.debug('new client={}'.format(client))
+                logging.debug('new client added to simulation={}'.format(client))
 
-    def __build_agent_path(self, nodes_to_visit):
-        path = []
-        for i in range(0, len(nodes_to_visit) - 1 , 1):
-            start_node = nodes_to_visit[i]
-            end_node = nodes_to_visit[i+1]
-            path += dijkstras_algorithm(self.__nav_graph_node_dic, start_node, end_node)
-        return path
+    # def __build_agent_path(self, nodes_to_visit):
+    #     path = []
+    #     for i in range(0, len(nodes_to_visit) - 1 , 1):
+    #         start_node = nodes_to_visit[i]
+    #         end_node = nodes_to_visit[i+1]
+    #         path += dijkstras_algorithm(self.__nav_graph_node_dic, start_node, end_node)
+    #     return path
 
     def __move_agents(self):
         for agent in self.__agents:
@@ -213,3 +212,5 @@ class MainSimulation:
                 self.__nav_graph_node_dic[map_element.get_id()] = map_element
         self.__run_simulation = True
         self.__time_step = 1
+        self.__agent_builder = AgentBuilder(self.__agents_wait_list, self.type_nav_graph_nodes, self.__nav_graph_node_dic)
+        self.__agent_builder.start()
