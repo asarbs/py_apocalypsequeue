@@ -1,6 +1,6 @@
-from apocalypse import Client
 from console_args import CONSOLE_ARGS
 from data import Data
+from datetime import datetime
 from map_editor.serialization import MapDeserializer
 from numpy import random as nrandom
 from system.AgentBuilder import AgentBuilder
@@ -14,8 +14,8 @@ import logging
 import os
 import pygame
 import pygame_gui
-import time
 import system.Colors
+import time
 
 pygame.init()
 
@@ -35,7 +35,6 @@ class MainSimulation:
         self.file_browser = SimulationFileBrowser(position=file_browser_pos, ui_manager=self.gui_manager, simulation=self)
 
         self.__agent_builder = None
-        self.__agents_wait_list = []
 
         self.__agents = []
         self.__agents_count = 0
@@ -63,6 +62,7 @@ class MainSimulation:
     def main_loop(self):
         logging.debug("running={}".format(self.is_running))
         for num_of_repetition in range(0, CONSOLE_ARGS.num_of_repeat_max, 1):
+            start_time = datetime.now()
             self.restart_simulation()
             while self.is_running:
                 self.__time_step += 1
@@ -81,7 +81,9 @@ class MainSimulation:
                 self.gui_manager.draw_ui(self.screen)
 
                 pygame.display.update()
-
+            end_time = datetime.now()
+            time_delta = (end_time-start_time).total_seconds()
+            logging.info('repetition {} take {}[s] {}[m]'.format(num_of_repetition, time_delta, (time_delta / 60.0)))
         self.__data.dump(self.__map_image, self.created_map_elements)
 
     def restart_simulation(self):
@@ -91,6 +93,8 @@ class MainSimulation:
         self.__poisson_random = nrandom.poisson(lam=CONSOLE_ARGS.clients_mean_distribution, size=CONSOLE_ARGS.number_of_clients + 1).tolist()
         self.__next_agent_creation_time = self.__poisson_random.pop(0)
         self.__agents.clear()
+        if self.__agent_builder is not None:
+            self.__agent_builder.reset()
 
     def execute_simulation(self):
         if self.__run_simulation:
@@ -109,7 +113,7 @@ class MainSimulation:
 
     def __draw_background(self):
         self.screen.fill(Colors.BACKGROUND_COLOR)
-        if self.__map_image is not None:
+        if self.__map_image is not None and CONSOLE_ARGS.play_simulation == True:
             self.screen.blit(self.__map_image, self.__camera_pos)
 
     def __event_handler(self):
@@ -157,10 +161,11 @@ class MainSimulation:
         self.__right_mouse_pos = None
 
     def __draw(self):
-        for map_element in self.created_map_elements:
-            map_element.draw(self.screen, self.__camera_pos)
-        for agent in self.__agents:
-            agent.draw(self.screen, self.__camera_pos)
+        if CONSOLE_ARGS.play_simulation == True:
+            for map_element in self.created_map_elements:
+                map_element.draw(self.screen, self.__camera_pos)
+            for agent in self.__agents:
+                agent.draw(self.screen, self.__camera_pos)
 
     def __add_agent(self):
         if self.__map_image is not None and self.__agents_count < CONSOLE_ARGS.number_of_clients:
@@ -168,10 +173,7 @@ class MainSimulation:
                 self.__next_agent_creation_time = self.__time_step + self.__poisson_random.pop(0)
                 logging.debug('__next_agent_creation_time={}'.format(self.__next_agent_creation_time))
                 self.__agents_count += 1
-                while len(self.__agents_wait_list) == 0:
-                    logging.debug("add_agent: wait for next agent")
-                    time.sleep(5)
-                client = self.__agents_wait_list.pop(0)
+                client = self.__agent_builder.get_agent()
                 self.__agents.append(client)
                 logging.debug('new client added to simulation={}'.format(client))
 
@@ -212,5 +214,4 @@ class MainSimulation:
                 self.__nav_graph_node_dic[map_element.get_id()] = map_element
         self.__run_simulation = True
         self.__time_step = 1
-        self.__agent_builder = AgentBuilder(self.__agents_wait_list, self.type_nav_graph_nodes, self.__nav_graph_node_dic)
-        self.__agent_builder.start()
+        self.__agent_builder = AgentBuilder(self.type_nav_graph_nodes, self.__nav_graph_node_dic)

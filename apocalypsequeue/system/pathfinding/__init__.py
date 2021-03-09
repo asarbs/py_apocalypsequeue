@@ -2,6 +2,7 @@ import pygame
 import math
 import operator
 import logging
+import system.Colors
 from system.Vector import Vector
 from system.Colors import NAV_GRAPH_NODE
 from system.Colors import CASH_REGISTER
@@ -33,9 +34,13 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.__id = NavGraphNode.count
         self.edge_list = []
         self.__color = NAV_GRAPH_NODE
+        self.__color_path = NAV_GRAPH_NODE
         NavGraphNode.count += 1
 
         self.__type = MapElementType.NAV_GRAPH_NODE
+
+        self.font = pygame.font.SysFont('Arial', 12)
+
 
     def __hash__(self):
         return hash(str(__class__) * self.__id)
@@ -44,7 +49,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         return u'id:{}'.format(self.__id)
 
     def add_neighbor(self, neighbor):
-        weight = round((self.__position - neighbor.__position).getLength())
+        weight = (self.__position - neighbor.__position).getLength()
         self.edge_list.append(NavGraphNode.Edge(neighbor, weight))
 
     def remove_neighbor(self, neighbor, map_element_type):
@@ -66,16 +71,17 @@ class NavGraphNode(pygame.sprite.Sprite):
         self.__color = GREEN
 
     def mark_path(self):
-        self.__color = PINK
+        self.__color_path = PINK
 
     def draw(self, screen, camera_pos=(0, 0)):
         rect = self.rect.move(camera_pos)
-        # for edge in self.edge_list:
-        #     neighbor_rect = edge.neighbor.rect
-        #     neighbor_rect = neighbor_rect.move(camera_pos)
-        #     pygame.draw.line(screen, NAV_GRAPH_NODE, rect.center, neighbor_rect.center)
-        radius = 2
+        for edge in self.edge_list:
+            neighbor_rect = edge.neighbor.rect
+            neighbor_rect = neighbor_rect.move(camera_pos)
+            pygame.draw.line(screen, self.__color_path, rect.center, neighbor_rect.center)
+        radius = 5
         pygame.draw.circle(screen, self.__color, rect.center, radius)
+        #screen.blit(self.font.render(str(self), "True", system.Colors.WHITE, system.Colors.BLACK), rect)
 
     def get_id(self):
         return self.__id
@@ -145,7 +151,7 @@ def build_nav_graph(screen_size, shelves, nav_point_density):
 def __if_point_in_shelf(x_pos, y_pos, shelves):
     counter = 0
     for shelf in shelves:
-        if not shelf.rect.collidepoint(x_pos, y_pos):
+        if not shelf.collidepoint(x_pos, y_pos):
             counter += 1
     return counter == len(shelves)
 
@@ -215,3 +221,50 @@ def dijkstras_algorithm(nav_graph_dic, start_node, end_node):
     path.reverse()
 
     return path
+
+def get_min_score_node(d):
+    minval = min(d.values())
+    res = [k for k, v in d.items() if v==minval]
+    print(res)
+    res.reverse()
+    return res[0]
+
+
+def h(start, end):
+    start_pos = start.get_pos_vector()
+    end_pos = end.get_pos_vector()
+    diff = end_pos - start_pos
+    return diff.getLength()
+
+
+def a_algorithm(nav_graph_dic, start_node, end_node):
+    open_set = {}
+    open_set[start_node.get_id()] = start_node
+
+    comeFrom = []
+
+    gScore = {}
+    fScore = {}
+    for k in nav_graph_dic.keys():
+        gScore[k] = math.inf
+        fScore[k] = math.inf
+    gScore[start_node.get_id()] = 0
+    fScore[start_node.get_id()] = h(start_node, end_node)
+
+    while len(open_set) > 0:
+        min_id = get_min_score_node(fScore)
+        current = open_set[min_id]
+        if current == end_node:
+            return comeFrom
+        open_set.pop(current.get_id())
+        for edge_neighbor in current.get_neighbors():
+            tentative_gScore = gScore[current.get_id()] + edge_neighbor.weight
+            if tentative_gScore < gScore[edge_neighbor.neighbor.get_id()]:
+                comeFrom.append(current)
+                gScore[edge_neighbor.neighbor.get_id()] = tentative_gScore
+                fScore[edge_neighbor.neighbor.get_id()] = gScore[edge_neighbor.neighbor.get_id()] + h(edge_neighbor.neighbor, end_node)
+                if edge_neighbor.neighbor.get_id() not in open_set:
+                    open_set[edge_neighbor.neighbor.get_id()] = edge_neighbor.neighbor
+
+
+

@@ -1,5 +1,5 @@
 import pygame
-from system.pathfinding import build_nav_graph, dijkstras_algorithm
+from system.pathfinding import build_nav_graph, dijkstras_algorithm, a_algorithm
 
 RED = (255, 0, 0)
 GREEN = (0,255,0)
@@ -34,7 +34,7 @@ def main():
     screen = pygame.display.set_mode(screen_size)
     running = True
     shelves = build_shelves()
-    nav_graph_dic, nav_graph_group = build_nav_graph(screen_size, shelves)
+    array, nav_graph_dic, nav_graph_group = build_nav_graph(screen_size, shelves, nav_point_density=(15, 15))
     start_node = -1
     end_node = -1
     executed = False
@@ -47,7 +47,7 @@ def main():
             end_node = nav_graph_dic[selected_node_id]
             end_node.mark()
         if start_node != -1 and end_node != -1 and not executed :
-            path = dijkstras_algorithm(nav_graph_dic, start_node, end_node)
+            path = a_algorithm(nav_graph_dic, start_node, end_node)
             for p in path:
                 p.mark_path()
             executed = True

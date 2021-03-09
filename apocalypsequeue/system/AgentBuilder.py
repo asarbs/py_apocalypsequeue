@@ -2,22 +2,21 @@ from apocalypse import Client
 from console_args import CONSOLE_ARGS
 from system.MapElements.MapElementType import MapElementType
 from system.pathfinding import dijkstras_algorithm
+from system.pathfinding import a_algorithm
 import logging
 import random
-import threading
+
 from datetime import datetime
 
 
-
-class AgentBuilder(threading.Thread):
-    def __init__(self, agents_wait_list, type_nav_graph_nodes, nav_graph_node_dic):
+class AgentBuilder():
+    def __init__(self, type_nav_graph_nodes, nav_graph_node_dic):
         super(AgentBuilder, self).__init__()
         self.__agents_count = 0
-        self.__agents_wait_list = agents_wait_list
         self.__nav_graph_node_dic = nav_graph_node_dic
         self.type_nav_graph_nodes = type_nav_graph_nodes
 
-    def run(self):
+    def get_agent(self):
         while self.__agents_count < CONSOLE_ARGS.number_of_clients:
             start_time = datetime.now()
             self.__agents_count += 1
@@ -30,9 +29,10 @@ class AgentBuilder(threading.Thread):
             path = self.__build_agent_path(nodes_to_visit)
             client = Client(start_node=start_node, path=path, infected=infected, canInfect=canInfect,
                 target_cash_register=target_cash_register)
-            self.__agents_wait_list.append(client)
             end_time = datetime.now()
-            logging.debug('AgentBuilder new client={} delta={}[s]'.format(client, (end_time-start_time).total_seconds()))
+            time_delta = (end_time - start_time).total_seconds()
+            logging.info('AgentBuilder new client={} delta={}[s]'.format(client, time_delta))
+            return client
 
     def __build_agent_path(self, nodes_to_visit):
         path = []
@@ -40,4 +40,8 @@ class AgentBuilder(threading.Thread):
             start_node = nodes_to_visit[i]
             end_node = nodes_to_visit[i+1]
             path += dijkstras_algorithm(self.__nav_graph_node_dic, start_node, end_node)
+            #path += a_algorithm(self.__nav_graph_node_dic, start_node, end_node)
         return path
+
+    def reset(self):
+        self.__agents_count = 0
