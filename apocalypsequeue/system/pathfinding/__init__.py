@@ -2,11 +2,11 @@ import pygame
 import math
 import operator
 import logging
-import system.Colors
 from system.Vector import Vector
 from system.Colors import NAV_GRAPH_NODE
 from system.Colors import CASH_REGISTER
 from system.Colors import SHELVES
+from system.Colors import Shelf_Colors
 from system.Colors import ENTRANCE
 from system.MapElements.MapElementType import MapElementType
 
@@ -38,6 +38,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         NavGraphNode.count += 1
 
         self.__type = MapElementType.NAV_GRAPH_NODE
+        self.__product_type = -1
 
         self.font = pygame.font.SysFont('Arial', 12)
 
@@ -52,7 +53,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         weight = (self.__position - neighbor.__position).getLength()
         self.edge_list.append(NavGraphNode.Edge(neighbor, weight))
 
-    def remove_neighbor(self, neighbor, map_element_type):
+    def remove_neighbor(self, neighbor, map_element_type, product_type):
         edge_to_delete = []
         for n in self.edge_list:
             if n.neighbor is neighbor:
@@ -60,7 +61,7 @@ class NavGraphNode(pygame.sprite.Sprite):
                 edge_to_delete.append(n)
 
         if len(edge_to_delete) > 0:
-            self.set_type(map_element_type)
+            self.set_type(map_element_type, product_type)
         for e in edge_to_delete:
             self.edge_list.remove(e)
 
@@ -95,13 +96,14 @@ class NavGraphNode(pygame.sprite.Sprite):
     def get_pos_vector(self):
         return Vector(self.rect.centerx, self.rect.centery)
 
-    def set_type(self, map_element_type):
+    def set_type(self, map_element_type, product_type):
         if self.__type is MapElementType.NAV_GRAPH_NODE:
             self.__type = map_element_type
-            self.__set_node_color()
+            self.__product_type = product_type
         if self.__type is MapElementType.SHELF and map_element_type in (MapElementType.ENTRANCE, MapElementType.CASH_REGISTER):
             self.__type = map_element_type
-            self.__set_node_color()
+            self.__product_type = product_type
+        self.__set_node_color()
 
     def __set_node_color(self):
         if self.__type == MapElementType.CASH_REGISTER:
@@ -109,7 +111,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         elif self.__type == MapElementType.ENTRANCE:
             self.__color = ENTRANCE
         elif self.__type == MapElementType.SHELF:
-            self.__color = SHELVES
+            self.__color = Shelf_Colors[self.__product_type]
 
     def get_color(self):
         return self.__color
@@ -121,7 +123,7 @@ class NavGraphNode(pygame.sprite.Sprite):
         edge_list_serialization = []
         for edge in self.edge_list:
             edge_list_serialization.append({'neighbor_id':edge.neighbor.get_id(), 'weight': edge.weight})
-        return {"id": self.get_id(), "pos": {'top': self.rect.top, 'left': self.rect.left}, "dim": self.rect.size, "neighbor": edge_list_serialization, 'type': int(self.__type)}
+        return {"id": self.get_id(), "pos": {'top': self.rect.top, 'left': self.rect.left}, "dim": self.rect.size, "neighbor": edge_list_serialization, 'type': int(self.__type), 'product_type': self.__product_type }
 
 
 def build_nav_graph(screen_size, shelves, nav_point_density):

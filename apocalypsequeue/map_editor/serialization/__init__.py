@@ -35,13 +35,13 @@ class MapDeserializer:
             for key, value in data.items():
                 if key == "Shelf":
                     for sh in value:
-                        created_map_elements.append(Shelf(pygame.Rect(sh['pos'], sh['dim'])))
+                        created_map_elements.append(Shelf(pygame.Rect(sh['pos'], sh['dim']), sh['product_type']))
                 elif key == "NavGraphNode":
                     node_dic = {}
                     for n in value:
                         node = NavGraphNode(Vector(n['pos']['left'], n['pos']['top']))
                         node.set_id(n['id'])
-                        node.set_type(Int2MapElementType[n['type']])
+                        node.set_type(Int2MapElementType[n['type']], n['product_type'])
                         node_dic[node.get_id()] = node
                         created_map_elements.append(node)
                     for n1 in value:
