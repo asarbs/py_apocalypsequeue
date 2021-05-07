@@ -64,6 +64,186 @@
             "selected_border": "#fccf03"
         }
     },
+    "#ShelfButton_0":
+    {
+        "colours":
+        {
+            "normal_border": "#7566c2",
+            "hovered_border": "#7566c2",
+            "selected_border": "#7566c2"
+        }
+    },
+    "#ShelfButton_1":
+    {
+        "colours":
+        {
+            "normal_border": "#c98561",
+            "hovered_border": "#c98561",
+            "selected_border": "#c98561"
+        }
+    },
+    "#ShelfButton_2":
+    {
+        "colours":
+        {
+            "normal_border": "#f3dd54",
+            "hovered_border": "#f3dd54",
+            "selected_border": "#f3dd54"
+        }
+    },
+    "#ShelfButton_3":
+    {
+        "colours":
+        {
+            "normal_border": "#37656d",
+            "hovered_border": "#37656d",
+            "selected_border": "#37656d"
+        }
+    },
+    "#ShelfButton_4":
+    {
+        "colours":
+        {
+            "normal_border": "#4f8734",
+            "hovered_border": "#4f8734",
+            "selected_border": "#4f8734"
+        }
+    },
+    "#ShelfButton_5":
+    {
+        "colours":
+        {
+            "normal_border": "#cdebdf",
+            "hovered_border": "#cdebdf",
+            "selected_border": "#cdebdf"
+        }
+    },
+    "#ShelfButton_6":
+    {
+        "colours":
+        {
+            "normal_border": "#1007df2",
+            "hovered_border": "#1007df2",
+            "selected_border": "#1007df2"
+        }
+    },
+    "#ShelfButton_7":
+    {
+        "colours":
+        {
+            "normal_border": "#f9c0ab",
+            "hovered_border": "#f9c0ab",
+            "selected_border": "#f9c0ab"
+        }
+    },
+    "#ShelfButton_8":
+    {
+        "colours":
+        {
+            "normal_border": "#e063b3",
+            "hovered_border": "#e063b3",
+            "selected_border": "#e063b3"
+        }
+    },
+    "#ShelfButton_9":
+    {
+        "colours":
+        {
+            "normal_border": "#3c65c2",
+            "hovered_border": "#3c65c2",
+            "selected_border": "#3c65c2"
+        }
+    },
+    "#ShelfButton_10":
+    {
+        "colours":
+        {
+            "normal_border": "#a6b136",
+            "hovered_border": "#a6b136",
+            "selected_border": "#a6b136"
+        }
+    },
+    "#ShelfButton_11":
+    {
+        "colours":
+        {
+            "normal_border": "#74a3ab",
+            "hovered_border": "#74a3ab",
+            "selected_border": "#74a3ab"
+        }
+    },
+    "#ShelfButton_12":
+    {
+        "colours":
+        {
+            "normal_border": "#51b7a1",
+            "hovered_border": "#51b7a1",
+            "selected_border": "#51b7a1"
+        }
+    },
+    "#ShelfButton_13":
+    {
+        "colours":
+        {
+            "normal_border": "#91694d",
+            "hovered_border": "#91694d",
+            "selected_border": "#91694d"
+        }
+    },
+    "#ShelfButton_14":
+    {
+        "colours":
+        {
+            "normal_border": "#ec7cda",
+            "hovered_border": "#ec7cda",
+            "selected_border": "#ec7cda"
+        }
+    },
+    "#ShelfButton_15":
+    {
+        "colours":
+        {
+            "normal_border": "#72b8b8",
+            "hovered_border": "#72b8b8",
+            "selected_border": "#72b8b8"
+        }
+    },
+    "#ShelfButton_16":
+    {
+        "colours":
+        {
+            "normal_border": "#c63536",
+            "hovered_border": "#c63536",
+            "selected_border": "#c63536"
+        }
+    },
+    "#ShelfButton_17":
+    {
+        "colours":
+        {
+            "normal_border": "#7a43bf",
+            "hovered_border": "#7a43bf",
+            "selected_border": "#7a43bf"
+        }
+    },
+    "#ShelfButton_18":
+    {
+        "colours":
+        {
+            "normal_border": "#434ad3",
+            "hovered_border": "#434ad3",
+            "selected_border": "#434ad3"
+        }
+    },
+    "#ShelfButton_19":
+    {
+        "colours":
+        {
+            "normal_border": "#674ab2",
+            "hovered_border": "#674ab2",
+            "selected_border": "#674ab2"
+        }
+    },
 
     "#default_shape_style":
     {

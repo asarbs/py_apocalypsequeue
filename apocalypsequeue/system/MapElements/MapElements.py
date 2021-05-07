@@ -29,15 +29,16 @@ class MapElement:
 
 
 class Shelf(MapElement):
-    def __init__(self, rect):
-        super(Shelf, self).__init__(rect, Colors.SHELVES, MapElementType.SHELF)
+    def __init__(self, rect, product_type):
+        super(Shelf, self).__init__(rect, Colors.Shelf_Colors[product_type], MapElementType.SHELF)
+        self.product_type = product_type
 
 
 class Entrance(MapElement):
     def __init__(self, rect):
-        super(Entrance, self).__init__(rect, Colors.ENTRANCE, MapElementType.ENTRANCE)
+        super(Entrance, self).__init__(rect, Colors.ENTRANCE, MapElementType.ENTRANCE, -1)
 
         
 class CashRegister(MapElement):
     def __init__(self, rect):
-        super(CashRegister, self).__init__(rect, Colors.CASH_REGISTER,MapElementType.CASH_REGISTER)
+        super(CashRegister, self).__init__(rect, Colors.CASH_REGISTER,MapElementType.CASH_REGISTER, -2)

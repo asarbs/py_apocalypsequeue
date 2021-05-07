@@ -2,7 +2,6 @@ from console_args import CONSOLE_ARGS
 from map_editor.Brush import BrushType
 from map_editor.Brush import CashRegisterBrush
 from map_editor.Brush import EntranceBrush
-from map_editor.Brush import NavGraphNodeBrush
 from map_editor.Brush import ShelfBrush
 from map_editor.MapElementToolbar import MapElementToolbar
 from map_editor.serialization import MapDeserializer
@@ -29,7 +28,7 @@ class MapEditor(object):
     WINDOWS_SIZE = (1524, 1000)
     FPS = 60
     BRUSH_DIC = {
-        BrushType.SHELF: ShelfBrush(),
+        BrushType.SHELF: ShelfBrush(1),
         BrushType.ENTRANCE: EntranceBrush(),
         BrushType.CASH_REGISTER: CashRegisterBrush()
     }
@@ -128,6 +127,7 @@ class MapEditor(object):
         self.__remove_covered_nav_graph_nodes(new_map_element)
         self.edit_mode = False
         self.tmp_map_elements_start_pos = None
+        self.__brush.reset_rect()
 
     def __remove_covered_nav_graph_nodes(self, new_map_element):
         nav_graph_node_to_delete = []
@@ -193,7 +193,8 @@ class MapEditor(object):
                 for node in nodes:
                     self.created_map_elements.append(node)
 
-    def select_brash(self, brush_type: BrushType):
+    def select_brash(self, brush_type: BrushType, product_type):
         self.__brush = MapEditor.BRUSH_DIC[brush_type]
+        self.__brush.product_type = product_type
 
 

@@ -8,3 +8,47 @@ SHELVES = (252, 207, 3) #fccf03
 NAV_GRAPH_NODE = (132, 140, 134) #848c86
 ENTRANCE = (26, 255, 163) #1affa3
 CASH_REGISTER = (255, 0, 255) #ff00ff
+SHELF_0 = (117, 102, 194) #7566c2
+SHELF_1 = (201, 133, 97) #c98561
+SHELF_2 = (243, 221, 84) #f3dd54
+SHELF_3 = (55, 101, 109) #37656d
+SHELF_4 = (79, 135, 52) #4f8734
+SHELF_5 = (205, 235, 223) #cdebdf
+SHELF_6 = (256, 125, 242) #1007df2
+SHELF_7 = (249, 192, 171) #f9c0ab
+SHELF_8 = (224, 99, 179) #e063b3
+SHELF_9 = (60, 101, 194) #3c65c2
+SHELF_10 = (166, 177, 54) #a6b136
+SHELF_11 = (116, 163, 171) #74a3ab
+SHELF_12 = (81, 183, 161) #51b7a1
+SHELF_13 = (145, 105, 77) #91694d
+SHELF_14 = (236, 124, 218) #ec7cda
+SHELF_15 = (114, 184, 184) #72b8b8
+SHELF_16 = (198, 53, 54) #c63536
+SHELF_17 = (122, 67, 191) #7a43bf
+SHELF_18 = (67, 74, 211) #434ad3
+SHELF_19 = (103, 74, 178) #674ab2
+
+Shelf_Colors = [
+    SHELF_0,
+    SHELF_1,
+    SHELF_2,
+    SHELF_3,
+    SHELF_4,
+    SHELF_5,
+    SHELF_6,
+    SHELF_7,
+    SHELF_8,
+    SHELF_9,
+    SHELF_10,
+    SHELF_11,
+    SHELF_12,
+    SHELF_13,
+    SHELF_14,
+    SHELF_15,
+    SHELF_16,
+    SHELF_17,
+    SHELF_18,
+    SHELF_19,
+]
+

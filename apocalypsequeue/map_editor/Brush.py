@@ -11,8 +11,9 @@ class BrushType(Enum):
 
 
 class Brush:
-    def __init__(self):
+    def __init__(self, product_type):
         self._rect = None
+        self.product_type = product_type
 
     def start_drawing(self, pos):
         self._rect = pygame.Rect(pos, (10, 10))
@@ -34,29 +35,20 @@ class Brush:
     def move_ip(self, negative_camera_pos):
         self._rect.move_ip(negative_camera_pos)
 
+    def reset_rect(self):
+        self._rect = pygame.Rect((0,0), (0, 0))
 
 class ShelfBrush(Brush):
-    def __init__(self):
-        super(ShelfBrush, self).__init__()
+    def __init__(self, product_type):
+        super(ShelfBrush, self).__init__(product_type)
 
     def get_map_element(self):
-        return system.MapElements.MapElements.Shelf(self._rect)
-
-
-class NavGraphNodeBrush(Brush):
-    def __init__(self):
-        super(NavGraphNodeBrush, self).__init__()
-
-    def get_map_element(self):
-        return system.MapElements.MapElements.NavGraphNode(self._rect)
-
-    def resize_map_element(self, height, width):
-        pass
+        return system.MapElements.MapElements.Shelf(self._rect, self.product_type)
 
 
 class EntranceBrush(Brush):
     def __init__(self):
-        super(EntranceBrush, self).__init__()
+        super(EntranceBrush, self).__init__(-1)
 
     def get_map_element(self):
         return system.MapElements.MapElements.Entrance(self._rect)
@@ -64,7 +56,7 @@ class EntranceBrush(Brush):
 
 class CashRegisterBrush(Brush):
     def __init__(self):
-        super(CashRegisterBrush, self).__init__()
+        super(CashRegisterBrush, self).__init__(-2)
 
     def get_map_element(self):
         return system.MapElements.MapElements.CashRegister(self._rect)
